@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pos',
+    'superadmin',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,10 @@ ROOT_URLCONF = 'SalesSmart.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'pos' / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'pos' / 'templates',
+            BASE_DIR / 'superadmin' / 'templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

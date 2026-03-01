@@ -24,4 +24,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='pos/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login', http_method_names=['get', 'post']), name='logout'),
     path('pos/', include('pos.urls')),
+    path('superadmin/', include('superadmin.urls')),
 ]
