@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaleSmart POS - Modern Point of Sale System for Kenyan Businesses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --info-color: #0dcaf0;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,154.7C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .btn-hero {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .btn-primary-hero {
+            background: linear-gradient(135deg, #0d6efd, #0056b3);
+            color: white;
+            box-shadow: 0 10px 30px rgba(13, 110, 253, 0.3);
+        }
+
+        .btn-primary-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(13, 110, 253, 0.4);
+            color: white;
+        }
+
+        .btn-outline-hero {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline-hero:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: none;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), #0056b3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .feature-card p {
+            color: var(--secondary-color);
+            margin-bottom: 0;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+            box-shadow: 0 25px 50px rgba(13, 110, 253, 0.3);
+            border: 3px solid var(--primary-color);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .price-currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+
+        .price-period {
+            font-size: 1rem;
+            color: var(--secondary-color);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .testimonial-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+
+        .testimonial-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 25px;
+            color: var(--dark-color);
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .testimonial-role {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .btn-hero {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .price {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .counter {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6 hero-content">
+                    <h1 class="fade-in">Transform Your Business with SaleSmart POS</h1>
+                    <p class="fade-in">The modern Point of Sale system designed for Kenyan businesses. Manage sales, inventory, and customers with ease.</p>
+                    <div class="fade-in">
+                        <a href="#signup" class="btn-hero btn-primary-hero">Get Started Free</a>
+                        <a href="#features" class="btn-hero btn-outline-hero">Learn More</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="fade-in">
+                        <canvas id="heroChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold fade-in">Powerful Features for Your Business</h2>
+                <p class="lead fade-in">Everything you need to run your business efficiently</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-cash-register"></i>
+                        </div>
+                        <h3>Point of Sale</h3>
+                        <p>Fast, intuitive POS interface with barcode scanning, multiple payment methods, and real-time inventory updates.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <h3>Inventory Management</h3>
+                        <p>Track stock levels, set low-stock alerts, manage categories, and get detailed product analytics.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Advanced Analytics</h3>
+                        <p>Comprehensive reports, sales trends, customer insights, and business performance metrics.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Customer Management</h3>
+                        <p>Build customer relationships, track purchase history, and implement loyalty programs.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Mobile Responsive</h3>
+                        <p>Access your business anywhere with our mobile-friendly design and cloud-based system.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Secure & Reliable</h3>
+                        <p>Bank-level security, data encryption, regular backups, and 99.9% uptime guarantee.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number counter" data-target="1000">300</div>
+                        <div class="stat-label">Businesses Trust Us</div>
+                    </div>
+                </div>
+                <div class="col-md-3 fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number counter" data-target="50000">50000</div>
+                        <div class="stat-label">Transactions Daily</div>
+                    </div>
+                </div>
+                <div class="col-md-3 fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number counter" data-target="99">85%</div>
+                        <div class="stat-label">% Customer Satisfaction</div>
+                    </div>
+                </div>
+                <div class="col-md-3 fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number counter" data-target="24">24</div>
+                        <div class="stat-label">/7 Support Available</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold fade-in">Choose Your Plan</h2>
+                <p class="lead fade-in">Flexible pricing for businesses of all sizes</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 fade-in">
+                    <div class="pricing-card">
+                        <h3>Basic</h3>
+                        <div class="price">
+                            <span class="price-currency">Ksh</span>FREE
+                            <span class="price-period">/month</span>
+                        </div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Up to 5 users</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Basic reporting</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Email support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 1GB storage</li>
+                        </ul>
+                        <a href="#signup" class="btn btn-outline-primary w-100">Get Started Free</a>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="pricing-card featured">
+                        <div class="badge bg-primary text-white position-absolute" style="top: -15px; left: 50%; transform: translateX(-50%);">Most Popular</div>
+                        <h3>Pro</h3>
+                        <div class="price">
+                            <span class="price-currency">Ksh</span>200
+                            <span class="price-period">/month</span>
+                        </div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Up to 20 users</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced reporting</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Priority support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> API access</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 10GB storage</li>
+                        </ul>
+                        <button class="btn btn-primary w-100" onclick="showPaymentModal('Pro')">Upgrade Now</button>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="pricing-card">
+                        <h3>Enterprise</h3>
+                        <div class="price">
+                            <span class="price-currency">Ksh</span>1,200
+                            <span class="price-period">/month</span>
+                        </div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Unlimited users</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Premium features</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 24/7 support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Custom integrations</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Unlimited storage</li>
+                        </ul>
+                        <button class="btn btn-outline-primary w-100" onclick="showPaymentModal('Enterprise')">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Information Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card bg-light border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="text-center mb-4">
+                                <h4 class="fw-bold">
+                                    <i class="fas fa-credit-card me-2"></i>Payment Information
+                                </h4>
+                                <p class="text-muted">Upgrade your plan with our secure payment options</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-center mb-3">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-block mb-3">
+                                            <i class="fas fa-mobile-alt fa-2x text-primary"></i>
+                                        </div>
+                                        <h5 class="fw-bold">M-Pesa Payment</h5>
+                                        <div class="d-flex align-items-center justify-content-center mb-3">
+                                            <span class="h3 text-primary fw-bold me-2">5921405</span>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="copyTillNumber()">
+                                                <i class="fas fa-copy"></i> Copy
+                                            </button>
+                                        </div>
+                                        <p class="text-muted">Business Name: SalesSmart Solutions Ltd</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text-center mb-3">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-block mb-3">
+                                            <i class="fas fa-university fa-2x text-success"></i>
+                                        </div>
+                                        <h5 class="fw-bold">Bank Transfer</h5>
+                                        <p class="mb-2"><strong>Equity Bank</strong></p>
+                                        <p class="mb-2">Account No: 1234567890</p>
+                                        <p class="mb-2">Branch: Karen</p>
+                                        <p class="text-muted">Business Name: SalesSmart Solutions Ltd</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info mt-4">
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>How to Upgrade
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary text-white rounded-circle p-2 me-3">
+                                                <strong>1</strong>
+                                            </div>
+                                            <div>
+                                                <strong>Make Payment</strong>
+                                                <p class="mb-0 small text-muted">Pay via M-Pesa or Bank Transfer</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary text-white rounded-circle p-2 me-3">
+                                                <strong>2</strong>
+                                            </div>
+                                            <div>
+                                                <strong>Send Confirmation</strong>
+                                                <p class="mb-0 small text-muted">Email payment details to us</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button class="btn btn-primary" onclick="sendUpgradeEmail()">
+                                        <i class="fas fa-envelope me-2"></i> Contact Support for Upgrade
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bold fade-in">What Our Customers Say</h2>
+                <p class="lead fade-in">Join thousands of satisfied businesses</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 fade-in">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "SaleSmart transformed our retail business. The inventory management alone saved us hours each week!"
+                        </div>
+                        <div class="testimonial-author">John Mwangi</div>
+                        <div class="testimonial-role">Tech Store Owner</div>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "The reporting features are incredible. We can now make data-driven decisions for our restaurant."
+                        </div>
+                        <div class="testimonial-author">Sarah Kamau</div>
+                        <div class="testimonial-role">Restaurant Manager</div>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "Best investment we made. The app lets us manage our business from anywhere."
+                        </div>
+                        <div class="testimonial-author">David Ochieng</div>
+                        <div class="testimonial-role">Bookshop Owner</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="signup">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="fade-in">Ready to Transform Your Business?</h2>
+                    <p class="fade-in">Join thousands of Kenyan businesses using SaleSmart POS</p>
+                    <div class="fade-in">
+                        <button class="btn-hero btn-primary-hero" onclick="showSignupModal()">Start Free Trial</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signup Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Your Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Sign up with Email</h6>
+                            <form id="signupForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Business Name *</label>
+                                    <input type="text" class="form-control" id="businessName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Your Name *</label>
+                                    <input type="text" class="form-control" id="fullName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="phone" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password *</label>
+                                    <input type="password" class="form-control" id="password" required>
+                                    <small class="text-muted">Must be at least 8 characters with uppercase, lowercase, and numbers</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm Password *</label>
+                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <h6 class="mb-3">Or sign up with</h6>
+                                <button class="btn btn-outline-danger w-100 mb-2" onclick="signupWithGoogle()">
+                                    <i class="fab fa-google me-2"></i> Google
+                                </button>
+                                <hr>
+                                <h6 class="mb-3">Already have an account?</h6>
+                                <button class="btn btn-outline-primary w-100" onclick="showLoginModal()">Sign In</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Modal -->
+    <div class="modal fade" id="verificationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verify Your Email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>We've sent a verification code to your email. Please enter it below:</p>
+                    <div class="mb-3">
+                        <label class="form-label">Verification Code</label>
+                        <input type="text" class="form-control" id="verificationCode" placeholder="Enter 6-digit code">
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="verifyEmail()">Verify Email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Hero Chart
+        const heroCtx = document.getElementById('heroChart').getContext('2d');
+        new Chart(heroCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Sales Growth',
+                    data: [30000, 45000, 42000, 58000, 72000, 85000],
+                    borderColor: '#ffffff',
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#ffffff',
+                            callback: function(value) {
+                                return 'Ksh ' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Counter Animation
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const countUp = (counter) => {
+            const target = +counter.getAttribute('data-target');
+            const count = +counter.innerText;
+            const increment = target / speed;
+
+            if (count < target) {
+                counter.innerText = Math.ceil(count + increment);
+                setTimeout(() => countUp(counter), 10);
+            } else {
+                counter.innerText = target;
+            }
+        };
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    if (entry.target.classList.contains('counter')) {
+                        countUp(entry.target);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Modal Functions
+        function showSignupModal() {
+            const modal = new bootstrap.Modal(document.getElementById('signupModal'));
+            modal.show();
+        }
+
+        function showLoginModal() {
+            // Redirect to login page
+            window.location.href = '/login/';
+        }
+
+        function signupWithGoogle() {
+            // Google OAuth integration would go here
+            const toastEl = document.getElementById('paymentToast');
+            const toastBody = toastEl.querySelector('.toast-body');
+            toastBody.textContent = 'Google signup integration coming soon!';
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        // Payment Functions
+        function showPaymentModal(plan) {
+            // Show payment info toast
+            const toastEl = document.getElementById('paymentToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+            
+            // Scroll to payment information section
+            setTimeout(() => {
+                const paymentSection = document.querySelector('.pricing .card');
+                if (paymentSection) {
+                    paymentSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+            }, 500);
+        }
+
+        function copyTillNumber() {
+            const tillNumber = '5921405';
+            navigator.clipboard.writeText(tillNumber).then(function() {
+                // Show success toast
+                const toastEl = document.getElementById('copyToast');
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement("textarea");
+                textArea.value = tillNumber;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    const toastEl = document.getElementById('copyToast');
+                    const toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+                } catch (err) {
+                    console.error('Fallback copy failed: ', err);
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+
+        function sendUpgradeEmail() {
+            const subject = encodeURIComponent('SalesSmart Plan Upgrade Request');
+            const body = encodeURIComponent(`Hello SalesSmart Team,
+
+I would like to upgrade my plan. Please assist me with the upgrade process.
+
+Business Name: [Your Business Name]
+Email: [Your Email]
+Phone: [Your Phone Number]
+Desired Plan: [Pro/Enterprise]
+
+Thank you.`);
+            
+            // Show email toast
+            const toastEl = document.getElementById('emailToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+            
+            // Open email client
+            setTimeout(() => {
+                window.location.href = `mailto:sales@salessmart.co.ke?subject=${subject}&body=${body}`;
+            }, 500);
+        }
+
+        // Helper function to show toast with custom message
+        function showToast(toastId, message) {
+            const toastEl = document.getElementById(toastId);
+            const toastBody = toastEl.querySelector('.toast-body');
+            toastBody.textContent = message;
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        // Form Validation
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Password validation
+            if (password.length < 8) {
+                showToast('validationToast', 'Password must be at least 8 characters long');
+                return;
+            }
+            
+            if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+                showToast('validationToast', 'Password must contain uppercase, lowercase, and numbers');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showToast('validationToast', 'Passwords do not match');
+                return;
+            }
+            
+            // Show verification modal
+            const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
+            signupModal.hide();
+            
+            setTimeout(() => {
+                const verificationModal = new bootstrap.Modal(document.getElementById('verificationModal'));
+                verificationModal.show();
+            }, 500);
+        });
+
+        function verifyEmail() {
+            const code = document.getElementById('verificationCode').value;
+            
+            if (code === '123456') { // Demo code
+                alert('Account created successfully! Redirecting to login...');
+                window.location.href = '/login/';
+            } else {
+                alert('Invalid verification code. Try 123456 for demo.');
+            }
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+<!-- Toast Container -->
+<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 9999">
+    <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Till number copied to clipboard!
+        </div>
+    </div>
+    
+    <div id="paymentToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-info text-white">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong class="me-auto">Payment Info</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Payment instructions displayed below
+        </div>
+    </div>
+    
+    <div id="emailToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-primary text-white">
+            <i class="fas fa-envelope me-2"></i>
+            <strong class="me-auto">Email Support</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Opening email client...
+        </div>
+    </div>
+    
+    <div id="validationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-warning text-dark">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong class="me-auto">Validation Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Please check your input
+        </div>
+    </div>
+</div>
+</body>
+</html>

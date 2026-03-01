@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SalesSmart POS{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    {% if user.is_authenticated and request.business %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'pos:dashboard' %}">
+                <i class="fas fa-cash-register"></i> SalesSmart
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <div class="d-none d-lg-flex">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pos:dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pos:pos_interface' %}">
+                            <i class="fas fa-shopping-cart"></i> POS
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-box"></i> Products
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'pos:product_list' %}">All Products</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:product_create' %}">Add Product</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:category_list' %}">Categories</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="salesDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-chart-line"></i> Sales
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'pos:sale_list' %}">Sales History</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:reports' %}">Reports</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="expensesDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-receipt"></i> Expenses
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'pos:expense_list' %}">All Expenses</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:expense_create' %}">Add Expense</a></li>
+                        </ul>
+                    </li>
+                    {% if user.is_business_admin %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="managementDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cogs"></i> Management
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'pos:business_profile' %}">Business Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:user_list' %}">Users</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" id="darkModeToggle" onclick="toggleDarkMode()">
+                            <i class="fas fa-moon" id="darkModeIcon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> {{ user.get_full_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left; padding: 8px 16px;">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Mobile Hamburger Button -->
+            <button class="btn btn-outline-light d-lg-none" type="button" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="mobile-sidebar-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="text-white mb-0">
+                    <i class="fas fa-cash-register"></i> SalesSmart
+                </h5>
+                <button class="btn btn-outline-light btn-sm" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <small class="text-white-50">{{ user.get_full_name|default:user.username }}</small>
+        </div>
+        
+        <div class="mobile-sidebar-content">
+            <ul class="mobile-nav-list">
+                <li class="mobile-nav-item">
+                    <a href="{% url 'pos:dashboard' %}" class="mobile-nav-link">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="{% url 'pos:pos_interface' %}" class="mobile-nav-link">
+                        <i class="fas fa-shopping-cart"></i> POS
+                    </a>
+                </li>
+                <li class="mobile-nav-divider"></li>
+                <li class="mobile-nav-item">
+                    <div class="mobile-nav-section">
+                        <i class="fas fa-box"></i> Products
+                    </div>
+                    <ul class="mobile-sub-nav">
+                        <li><a href="{% url 'pos:product_list' %}" class="mobile-sub-nav-link">All Products</a></li>
+                        <li><a href="{% url 'pos:product_create' %}" class="mobile-sub-nav-link">Add Product</a></li>
+                        <li><a href="{% url 'pos:category_list' %}" class="mobile-sub-nav-link">Categories</a></li>
+                    </ul>
+                </li>
+                <li class="mobile-nav-item">
+                    <div class="mobile-nav-section">
+                        <i class="fas fa-chart-line"></i> Sales
+                    </div>
+                    <ul class="mobile-sub-nav">
+                        <li><a href="{% url 'pos:sale_list' %}" class="mobile-sub-nav-link">Sales History</a></li>
+                        <li><a href="{% url 'pos:reports' %}" class="mobile-sub-nav-link">Reports</a></li>
+                    </ul>
+                </li>
+                <li class="mobile-nav-item">
+                    <div class="mobile-nav-section">
+                        <i class="fas fa-receipt"></i> Expenses
+                    </div>
+                    <ul class="mobile-sub-nav">
+                        <li><a href="{% url 'pos:expense_list' %}" class="mobile-sub-nav-link">All Expenses</a></li>
+                        <li><a href="{% url 'pos:expense_create' %}" class="mobile-sub-nav-link">Add Expense</a></li>
+                    </ul>
+                </li>
+                {% if user.is_business_admin %}
+                <li class="mobile-nav-item">
+                    <div class="mobile-nav-section">
+                        <i class="fas fa-cogs"></i> Management
+                    </div>
+                    <ul class="mobile-sub-nav">
+                        <li><a href="{% url 'pos:business_profile' %}" class="mobile-sub-nav-link">Business Profile</a></li>
+                        <li><a href="{% url 'pos:user_list' %}" class="mobile-sub-nav-link">Users</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+                <li class="mobile-nav-divider"></li>
+                <li class="mobile-nav-item">
+                    <button class="mobile-nav-link" onclick="toggleDarkMode()">
+                        <i class="fas fa-moon" id="mobileDarkModeIcon"></i> Dark Mode
+                    </button>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="#" class="mobile-nav-link">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+                <li class="mobile-nav-item">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="mobile-nav-link" style="border: none; background: none; width: 100%; text-align: left;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <div class="col-12">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        
+        {% block content %}
+        {% endblock %}
+    </div>
+    {% else %}
+        <div class="container">
+            {% block login_content %}
+            {% endblock %}
+        </div>
+    {% endif %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dark Mode CSS -->
+    <style id="darkModeStyles">
+        :root {
+            --bg-primary: #0d6efd;
+            --bg-secondary: #6c757d;
+            --bg-success: #198754;
+            --bg-info: #0dcaf0;
+            --bg-warning: #ffc107;
+            --bg-danger: #dc3545;
+            --bg-light: #f8f9fa;
+            --bg-dark: #212529;
+            
+            --text-primary: #0d6efd;
+            --text-secondary: #6c757d;
+            --text-success: #198754;
+            --text-info: #0dcaf0;
+            --text-warning: #ffc107;
+            --text-danger: #dc3545;
+            --text-light: #f8f9fa;
+            --text-dark: #212529;
+        }
+        
+        [data-theme="dark"] {
+    --bg-primary: #0d6efd;
+    --bg-secondary: #343a40;
+    --bg-success: #198754;
+    --bg-info: #0dcaf0;
+    --bg-warning: #ffc107;
+    --bg-danger: #dc3545;
+    --bg-light: #1a1a1a;
+    --bg-dark: #000000;
+    
+    --text-primary: #ffffff;
+    --text-secondary: #adb5bd;
+    --text-success: #28a745;
+    --text-info: #17a2b8;
+    --text-warning: #ffc107;
+    --text-danger: #dc3545;
+    --text-light: #ffffff;
+    --text-dark: #ffffff;
+}
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--bg-primary), #0056b3);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background-color: var(--bg-light);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        [data-theme="dark"] .card {
+            border-color: #495057;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .navbar {
+            background: linear-gradient(135deg, var(--bg-primary), #0056b3);
+        }
+        
+        [data-theme="dark"] body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .form-control {
+            background-color: var(--bg-dark);
+            border-color: #495057;
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .form-control:focus {
+            background-color: var(--bg-dark);
+            border-color: var(--bg-primary);
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .table {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .table th {
+            background-color: var(--bg-secondary);
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .table td {
+            border-color: #495057;
+        }
+        
+        [data-theme="dark"] .dropdown-menu {
+            background-color: var(--bg-dark);
+            border-color: #495057;
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .dropdown-item {
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .dropdown-item:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .alert {
+            background-color: var(--bg-secondary);
+            border-color: #495057;
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .btn-outline-light {
+            border-color: var(--text-light);
+            color: var(--text-light);
+        }
+        
+        [data-theme="dark"] .btn-outline-light:hover {
+            background-color: var(--text-light);
+            color: var(--bg-dark);
+        }
+        
+        .form-control {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .btn {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Mobile Sidebar Styles */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0d6efd, #0056b3);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1050;
+            overflow-y: auto;
+        }
+        
+        .mobile-sidebar.active {
+            right: 0;
+        }
+        
+        .mobile-sidebar-header {
+            padding: 20px;
+            background: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .mobile-sidebar-content {
+            padding: 0;
+        }
+        
+        .mobile-nav-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .mobile-nav-item {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 15px;
+        }
+        
+        .mobile-nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+        
+        .mobile-nav-link i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+        
+        .mobile-nav-section {
+            padding: 12px 20px 8px;
+            color: rgba(255,255,255,0.8);
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .mobile-nav-section i {
+            margin-right: 8px;
+            font-size: 12px;
+        }
+        
+        .mobile-sub-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .mobile-sub-nav-link {
+            display: block;
+            padding: 10px 20px 10px 48px;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .mobile-sub-nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+            transform: translateX(3px);
+        }
+        
+        .mobile-nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 10px 0;
+        }
+        
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+        
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Mobile Menu Button Animation */
+        #mobileMenuToggle {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        #mobileMenuToggle:hover {
+            transform: scale(1.05);
+            background-color: rgba(255,255,255,0.1) !important;
+        }
+        
+        #mobileMenuToggle:active {
+            transform: scale(0.95);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .mobile-sidebar {
+                width: 280px;
+                right: -300px;
+            }
+            
+            .mobile-sidebar.active {
+                right: 0;
+            }
+        }
+        
+        /* Dark mode for mobile sidebar */
+        [data-theme="dark"] .mobile-sidebar {
+            background: linear-gradient(135deg, #1a1a1a, #000000);
+        }
+        
+        [data-theme="dark"] .mobile-sidebar-header {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        [data-theme="dark"] .mobile-nav-link:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        [data-theme="dark"] .mobile-sub-nav {
+            background: rgba(255,255,255,0.02);
+        }
+        
+        [data-theme="dark"] .mobile-sub-nav-link:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* Smooth scrolling for mobile */
+        .mobile-sidebar {
+            scroll-behavior: smooth;
+        }
+        
+        /* Hide scrollbar for mobile */
+        .mobile-sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .mobile-sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .mobile-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+        }
+        
+        .mobile-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+    </style>
+    
+    <script>
+        // Dark mode functionality
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update icons
+            const icon = document.getElementById('darkModeIcon');
+            const mobileIcon = document.getElementById('mobileDarkModeIcon');
+            
+            if (icon) {
+                icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            if (mobileIcon) {
+                mobileIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+        
+        // Mobile sidebar functionality
+        function openMobileSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            html.setAttribute('data-theme', savedTheme);
+            
+            // Update icons
+            const icon = document.getElementById('darkModeIcon');
+            const mobileIcon = document.getElementById('mobileDarkModeIcon');
+            
+            if (icon) {
+                icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            if (mobileIcon) {
+                mobileIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            
+            // Mobile sidebar event listeners
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const closeSidebar = document.getElementById('closeSidebar');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link, .mobile-sub-nav-link');
+            
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', openMobileSidebar);
+            }
+            
+            if (closeSidebar) {
+                closeSidebar.addEventListener('click', closeMobileSidebar);
+            }
+            
+            if (mobileOverlay) {
+                mobileOverlay.addEventListener('click', closeMobileSidebar);
+            }
+            
+            // Close sidebar when clicking on navigation links
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    // Don't close if it's a button (like dark mode toggle)
+                    if (this.tagName !== 'BUTTON') {
+                        setTimeout(closeMobileSidebar, 150);
+                    }
+                });
+            });
+            
+            // Handle escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const sidebar = document.getElementById('mobileSidebar');
+                    if (sidebar.classList.contains('active')) {
+                        closeMobileSidebar();
+                    }
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const sidebar = document.getElementById('mobileSidebar');
+                if (window.innerWidth > 991 && sidebar.classList.contains('active')) {
+                    closeMobileSidebar();
+                }
+            });
+        });
+    </script>
+    
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

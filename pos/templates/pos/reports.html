@@ -1,0 +1,144 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Reports - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>
+            <i class="fas fa-chart-line"></i> Reports
+            <small class="text-muted">{{ request.business.name }}</small>
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                                <h5>Sales Reports</h5>
+                                <p class="text-muted">View detailed sales analytics</p>
+                                <a href="{% url 'pos:sales_report' %}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-right"></i> View Sales
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
+                                <h5>Profit & Loss</h5>
+                                <p class="text-muted">Track business profitability</p>
+                                <button class="btn btn-success" disabled>
+                                    <i class="fas fa-arrow-right"></i> Coming Soon
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-box fa-3x text-info mb-3"></i>
+                                <h5>Inventory</h5>
+                                <p class="text-muted">Product performance analysis</p>
+                                <button class="btn btn-info" disabled>
+                                    <i class="fas fa-arrow-right"></i> Coming Soon
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h4 class="text-primary">--</h4>
+                            <small>Total Sales Today</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h4 class="text-success">--</h4>
+                            <small>Revenue This Month</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h4 class="text-info">--</h4>
+                            <small>Active Products</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h4 class="text-warning">--</h4>
+                            <small>Low Stock Items</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cog"></i> Report Options</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Export Options</h6>
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-pdf"></i> Export to PDF
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-print"></i> Print Report
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Advanced Reports</h6>
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-chart-pie"></i> Sales by Category
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-chart-bar"></i> Product Performance
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-users"></i> Customer Analytics
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-clock"></i> Peak Hours Analysis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

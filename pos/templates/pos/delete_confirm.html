@@ -1,0 +1,99 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Delete {{ type }} - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>
+            <i class="fas fa-trash"></i> Delete {{ type }}
+            <small class="text-muted">{{ request.business.name }}</small>
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Warning:</strong> This action cannot be undone.
+                </div>
+                
+                <h6>{{ type }} Details:</h6>
+                <div class="bg-light p-3 rounded">
+                    {% if object.name %}
+                    <p><strong>Name:</strong> {{ object.name }}</p>
+                    {% endif %}
+                    
+                    {% if object.sale_number %}
+                    <p><strong>Sale #:</strong> {{ object.sale_number }}</p>
+                    {% endif %}
+                    
+                    {% if object.description %}
+                    <p><strong>Description:</strong> {{ object.description }}</p>
+                    {% endif %}
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Yes, Delete {{ type }}
+                        </button>
+                        <a href="javascript:history.back()" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Information</h5>
+            </div>
+            <div class="card-body">
+                <h6>What happens when you delete?</h6>
+                
+                {% if type == 'Product' %}
+                <ul>
+                    <li>The product will be permanently removed</li>
+                    <li>Sales history containing this product will remain</li>
+                    <li>Stock quantity will be lost</li>
+                    <li>This action cannot be undone</li>
+                </ul>
+                {% elif type == 'Category' %}
+                <ul>
+                    <li>The category will be permanently removed</li>
+                    <li>Products in this category will lose their category</li>
+                    <li>This action cannot be undone</li>
+                </ul>
+                {% elif type == 'Sale' %}
+                <ul>
+                    <li>The sale record will be permanently removed</li>
+                    <li>Inventory adjustments may be needed</li>
+                    <li>This action cannot be undone</li>
+                </ul>
+                {% else %}
+                <ul>
+                    <li>This item will be permanently removed</li>
+                    <li>This action cannot be undone</li>
+                </ul>
+                {% endif %}
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Tip:</strong> Consider deactivating items instead of deleting them if you might need them later.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

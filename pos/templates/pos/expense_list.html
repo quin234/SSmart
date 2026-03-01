@@ -1,0 +1,119 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Expenses - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>
+            <i class="fas fa-receipt"></i> Expenses
+            <small class="text-muted">{{ request.business.name }}</small>
+            <a href="{% url 'pos:expense_create' %}" class="btn btn-primary btn-sm float-end">
+                <i class="fas fa-plus"></i> Add Expense
+            </a>
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Receipt #</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense in expenses %}
+                            <tr>
+                                <td>{{ expense.expense_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <strong>{{ expense.description }}</strong>
+                                    {% if expense.notes %}
+                                    <br><small class="text-muted">{{ expense.notes|truncatechars:50 }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ expense.category|lower }}">{{ expense.category }}</span>
+                                </td>
+                                <td>
+                                    <strong>${{ expense.amount|floatformat:2 }}</strong>
+                                </td>
+                                <td>
+                                    {% if expense.receipt_number %}
+                                    <code>{{ expense.receipt_number }}</code>
+                                    {% else %}
+                                    <span class="text-muted">No receipt</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ expense.created_by.get_full_name|default:expense.created_by.username }}</td>
+                                <td>
+                                    <a href="{% url 'pos:expense_edit' expense.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'pos:expense_delete' expense.id %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    <i class="fas fa-receipt"></i> No expenses found
+                                    <br>
+                                    <small>Start recording expenses to track your business costs</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-primary">{{ expenses|length }}</h5>
+                            <small>Total Expenses</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-success">${{ expenses|length }}</h5>
+                            <small>Total Amount</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-info">{{ expenses|length }}</h5>
+                            <small>This Month</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-warning">{{ expenses|length }}</h5>
+                            <small>Categories</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,567 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}{{ title }} - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="fas fa-box text-primary"></i> {{ title }}
+    </h2>
+    <div class="text-muted">
+        <i class="fas fa-plus-circle"></i> {{ request.business.name }}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle text-primary"></i> Basic Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" class="needs-validation">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information Group -->
+                    <div class="form-group mb-4">
+                        <h6 class="form-group-title text-primary mb-3">
+                            <i class="fas fa-tag"></i> Product Details
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">Product Name *</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.name.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.barcode.id_for_label }}" class="form-label fw-semibold">Barcode *</label>
+                                {{ form.barcode }}
+                                {% if form.barcode.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.barcode.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">Category</label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.category.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.is_active.id_for_label }}" class="form-label fw-semibold">Status</label>
+                                {{ form.is_active }}
+                                {% if form.is_active.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.is_active.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing Group -->
+                    <div class="form-group mb-4">
+                        <h6 class="form-group-title text-success mb-3">
+                            <i class="fas fa-dollar-sign"></i> Pricing Information
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.buying_price.id_for_label }}" class="form-label fw-semibold">Buying Price *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Ksh</span>
+                                    {{ form.buying_price }}
+                                </div>
+                                {% if form.buying_price.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.buying_price.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.selling_price.id_for_label }}" class="form-label fw-semibold">Selling Price *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Ksh</span>
+                                    {{ form.selling_price }}
+                                </div>
+                                {% if form.selling_price.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.selling_price.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.image.id_for_label }}" class="form-label fw-semibold">Product Image</label>
+                                {{ form.image }}
+                                {% if form.image.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.image.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {% if form.image.value %}
+                                <div class="mt-2">
+                                    <img src="{{ form.image.value.url }}" alt="Product Preview" class="img-preview">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Inventory Group -->
+                    <div class="form-group mb-4">
+                        <h6 class="form-group-title text-info mb-3">
+                            <i class="fas fa-warehouse"></i> Inventory Information
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-semibold">Stock Quantity *</label>
+                                {{ form.stock_quantity }}
+                                {% if form.stock_quantity.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.stock_quantity.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.low_stock_threshold.id_for_label }}" class="form-label fw-semibold">Low Stock Alert</label>
+                                {{ form.low_stock_threshold }}
+                                {% if form.low_stock_threshold.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.low_stock_threshold.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description Group -->
+                    <div class="form-group mb-4">
+                        <h6 class="form-group-title text-warning mb-3">
+                            <i class="fas fa-align-left"></i> Additional Information
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">Description</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.description.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i> {{ title }}
+                            </button>
+                            <a href="{% url 'pos:product_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb text-warning"></i> Help & Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="help-section mb-4">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-info-circle"></i> Product Fields Guide
+                    </h6>
+                    <div class="help-content">
+                        <div class="help-item mb-3">
+                            <h6 class="text-success">Product Name</h6>
+                            <p class="mb-0">The display name that customers will see. Use descriptive names that are easy to search and identify.</p>
+                            <div class="alert alert-info">
+                                <i class="fas fa-lightbulb"></i>
+                                <strong>Best Practice:</strong> Include brand name and key features for better searchability.
+                            </div>
+                        </div>
+                        
+                        <div class="help-item mb-3">
+                            <h6 class="text-success">Barcode</h6>
+                            <p class="mb-0">Unique identifier for scanning and inventory tracking. Use standard barcode formats when possible.</p>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Important:</strong> Ensure barcodes are unique to avoid scanning conflicts.
+                            </div>
+                        </div>
+                        
+                        <div class="help-item mb-3">
+                            <h6 class="text-success">Category</h6>
+                            <p class="mb-0">Group similar products together for better organization and reporting.</p>
+                            <div class="alert alert-info">
+                                <i class="fas fa-lightbulb"></i>
+                                <strong>Tip:</strong> Create logical categories like "Electronics", "Food", "Clothing" etc.
+                            </div>
+                        </div>
+                        
+                        <div class="help-item mb-3">
+                            <h6 class="text-info">Pricing Strategy</h6>
+                            <p class="mb-0">Set competitive selling prices while maintaining healthy profit margins.</p>
+                            <ul class="list-unstyled mt-2">
+                                <li><i class="fas fa-check text-success"></i> Research market prices</li>
+                                <li><i class="fas fa-check text-success"></i> Consider bulk pricing</li>
+                                <li><i class="fas fa-check text-success"></i> Monitor competitor pricing</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="help-item mb-3">
+                            <h6 class="text-info">Stock Management</h6>
+                            <p class="mb-0">Maintain optimal inventory levels to avoid stockouts and overstocking.</p>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-chart-line"></i>
+                                <strong>Low Stock Alert:</strong> Set thresholds to automatically get notified when items need reordering.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-stats mt-4">
+                    <h6 class="text-primary mb-3">
+                        <i class="fas fa-chart-bar"></i> Quick Stats
+                    </h6>
+                    <div class="stats-grid">
+                        <div class="stat-card bg-light">
+                            <div class="stat-icon text-primary">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h6>Total Products</h6>
+                                <p class="mb-0">{{ request.business.product_set.count }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card bg-light">
+                            <div class="stat-icon text-success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h6>Active Products</h6>
+                                <p class="mb-0">{{ request.business.product_set.all|length }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card bg-light">
+                            <div class="stat-icon text-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h6>Low Stock Items</h6>
+                                <p class="mb-0">{{ request.business.product_set.count }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-success mt-3">
+                    <i class="fas fa-rocket"></i>
+                    <strong>Pro Tip:</strong>
+                    <p class="mb-0">Use high-quality product images to increase customer confidence and sales. Clear, professional photos can significantly boost conversion rates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.form-group {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.form-group-title {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 12px 16px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    background-color: #fff;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+}
+
+.input-group-text {
+    background-color: #e9ecef;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    border-radius: 8px 0 0 8px;
+    font-weight: 600;
+    min-width: 60px;
+    text-align: center;
+}
+
+.input-group .form-control {
+    border-radius: 0 8px 8px 0;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0056b3);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(13, 110, 253, 0.4);
+}
+
+.btn-lg {
+    padding: 14px 32px;
+    font-size: 16px;
+}
+
+.help-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.help-item {
+    margin-bottom: 20px;
+}
+
+.help-item h6 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.help-item p {
+    color: #6c757d;
+    line-height: 1.6;
+}
+
+.quick-stats {
+    margin-top: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.stat-info h6 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.stat-info p {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.img-preview {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0 15px;
+    }
+    
+    .card {
+        margin-bottom: 20px;
+    }
+    
+    .col-lg-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .form-group {
+        padding: 16px;
+    }
+    
+    .form-control {
+        font-size: 16px;
+        padding: 16px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+    }
+    
+    .stat-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+    
+    .stat-info h6 {
+        font-size: 12px;
+    }
+    
+    .stat-info p {
+        font-size: 16px;
+    }
+    
+    .help-item {
+        margin-bottom: 16px;
+    }
+    
+    .help-item h6 {
+        font-size: 14px;
+    }
+}
+</style>
+
+<script>
+// Bootstrap form validation
+(function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        }, false);
+    });
+})();
+</script>
+{% endblock %}

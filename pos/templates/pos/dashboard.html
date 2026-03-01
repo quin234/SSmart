@@ -1,0 +1,481 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Dashboard - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="fas fa-tachometer-alt text-primary"></i> Dashboard
+    </h2>
+    <div class="text-muted">
+        <i class="fas fa-building"></i> {{ request.business.name }}
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary bg-opacity-10 rounded p-3">
+                            <i class="fas fa-box text-primary fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Total Products</h6>
+                        <h4 class="mb-0">{{ total_products }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success bg-opacity-10 rounded p-3">
+                            <i class="fas fa-shopping-cart text-success fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Total Sales</h6>
+                        <h4 class="mb-0">{{ total_sales }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-info bg-opacity-10 rounded p-3">
+                            <i class="fas fa-dollar-sign text-info fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Total Revenue</h6>
+                        <h4 class="mb-0">Ksh {{ total_revenue|floatformat:2 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-warning bg-opacity-10 rounded p-3">
+                            <i class="fas fa-exclamation-triangle text-warning fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Low Stock</h6>
+                        <h4 class="mb-0">{{ low_stock_products }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Graphical Statistics -->
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-bar text-primary"></i> Daily Sales (Last 7 Days)
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="dailySalesChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-column text-success"></i> Monthly Sales (Last 6 Months)
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlySalesChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-fire text-warning"></i> Top 10 Products
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="topProductsChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-rocket text-info"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'pos:pos_interface' %}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-cash-register me-2"></i> New Sale
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'pos:product_create' %}" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-plus-circle me-2"></i> Add Product
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'pos:expense_create' %}" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-receipt me-2"></i> Add Expense
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'pos:sales_report' %}" class="btn btn-info btn-lg w-100">
+                            <i class="fas fa-chart-line me-2"></i> View Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-lg {
+    padding: 14px 32px;
+    font-size: 16px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0056b3);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(13, 110, 253, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #198754, #146c43);
+    box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #146c43, #0f5132);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(25, 135, 84, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #e0a800, #d39e00);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #0dcaf0, #0aa2c0);
+    box-shadow: 0 4px 8px rgba(13, 202, 240, 0.3);
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #0aa2c0, #087990);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(13, 202, 240, 0.4);
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .card {
+    background-color: #1a1a1a;
+    border-color: #343a40;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .card-header {
+    background: linear-gradient(135deg, #343a40, #495057);
+    border-bottom-color: #495057;
+}
+
+[data-theme="dark"] .card-body {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .text-muted {
+    color: #adb5bd !important;
+}
+
+[data-theme="dark"] .bg-primary.bg-opacity-10 {
+    background-color: rgba(13, 110, 253, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-success.bg-opacity-10 {
+    background-color: rgba(25, 135, 84, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-info.bg-opacity-10 {
+    background-color: rgba(13, 202, 240, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-warning.bg-opacity-10 {
+    background-color: rgba(255, 193, 7, 0.2) !important;
+}
+
+[data-theme="dark"] .btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0056b3) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-success {
+    background: linear-gradient(135deg, #198754, #146c43) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-warning {
+    background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .btn-info {
+    background: linear-gradient(135deg, #0dcaf0, #0aa2c0) !important;
+    color: #ffffff !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0 15px;
+    }
+    
+    .card {
+        margin-bottom: 20px;
+    }
+    
+    .btn-lg {
+        padding: 16px;
+        font-size: 14px;
+    }
+    
+    h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    h4 {
+        font-size: 20px;
+    }
+    
+    h5 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .col-lg-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        margin-bottom: 10px;
+    }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Daily Sales Chart
+const dailySalesCtx = document.getElementById('dailySalesChart').getContext('2d');
+const dailySalesChart = new Chart(dailySalesCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+            label: 'Daily Sales (Ksh)',
+            data: [12000, 19000, 15000, 25000, 22000, 30000, 28000],
+            backgroundColor: 'rgba(13, 110, 253, 0.6)',
+            borderColor: 'rgba(13, 110, 253, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'Ksh ' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Monthly Sales Chart
+const monthlySalesCtx = document.getElementById('monthlySalesChart').getContext('2d');
+const monthlySalesChart = new Chart(monthlySalesCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+        datasets: [{
+            label: 'Monthly Sales (Ksh)',
+            data: [450000, 520000, 480000, 610000, 750000, 680000],
+            backgroundColor: 'rgba(25, 135, 84, 0.6)',
+            borderColor: 'rgba(25, 135, 84, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'Ksh ' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Top Products Chart
+const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+const topProductsChart = new Chart(topProductsCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Laptop', 'Phone', 'Tablet', 'Headphones', 'Mouse', 'Keyboard', 'Monitor', 'Speaker', 'Camera', 'Router'],
+        datasets: [{
+            label: 'Units Sold',
+            data: [45, 62, 38, 71, 89, 56, 42, 67, 31, 58],
+            backgroundColor: 'rgba(255, 193, 7, 0.6)',
+            borderColor: 'rgba(255, 193, 7, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Dark mode chart updates
+function updateChartTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const textColor = isDark ? '#ffffff' : '#333333';
+    const gridColor = isDark ? '#495057' : '#e9ecef';
+    
+    [dailySalesChart, monthlySalesChart, topProductsChart].forEach(chart => {
+        chart.options.scales.x.ticks.color = textColor;
+        chart.options.scales.y.ticks.color = textColor;
+        chart.options.scales.x.grid.color = gridColor;
+        chart.options.scales.y.grid.color = gridColor;
+        chart.update();
+    });
+}
+
+// Initialize chart theme
+document.addEventListener('DOMContentLoaded', function() {
+    updateChartTheme();
+});
+
+// Update charts when theme changes
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+            updateChartTheme();
+        }
+    });
+});
+
+observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+});
+</script>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Sales - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>
+            <i class="fas fa-chart-line"></i> Sales
+            <small class="text-muted">{{ request.business.name }}</small>
+        </h2>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="submit" class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <i class="fas fa-search"></i> Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Sale #</th>
+                                <th>Date</th>
+                                <th>Cashier</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sale in sales %}
+                            <tr>
+                                <td>
+                                    <strong>{{ sale.sale_number }}</strong>
+                                </td>
+                                <td>{{ sale.sale_date|date:"M d, Y H:i" }}</td>
+                                <td>{{ sale.cashier.get_full_name|default:sale.cashier.username }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ sale.items.count }}</span>
+                                </td>
+                                <td>
+                                    <strong>${{ sale.total_amount|floatformat:2 }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ sale.payment_method|lower|cut:' ' }}">{{ sale.payment_method }}</span>
+                                </td>
+                                <td>
+                                    {% if sale.payment_status == 'Paid' %}
+                                    <span class="badge bg-success">{{ sale.payment_status }}</span>
+                                    {% elif sale.payment_status == 'Pending' %}
+                                    <span class="badge bg-warning">{{ sale.payment_status }}</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">{{ sale.payment_status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'pos:sale_detail' sale.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">
+                                    <i class="fas fa-chart-line"></i> No sales found
+                                    <br>
+                                    <small>Try adjusting your date range or check back later</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-primary">{{ sales|length }}</h5>
+                            <small>Total Sales</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-success">${{ sales|length }}</h5>
+                            <small>Total Revenue</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-info">{{ sales|length }}</h5>
+                            <small>Paid Sales</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-warning">{{ sales|length }}</h5>
+                            <small>Pending Sales</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

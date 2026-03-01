@@ -1,0 +1,210 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}{{ title }} - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>
+            <i class="fas fa-user-plus"></i> {{ title }}
+            <small class="text-muted">{{ request.business.name }}</small>
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user"></i> User Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">Username *</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.username.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email *</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.email.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name *</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.first_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name *</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.last_name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.phone.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.role.id_for_label }}" class="form-label">Role *</label>
+                            {{ form.role }}
+                            {% if form.role.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.role.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.is_business_admin.id_for_label }}" class="form-label">Business Admin</label>
+                            <div class="form-check">
+                                {{ form.is_business_admin }}
+                                <label for="{{ form.is_business_admin.id_for_label }}" class="form-check-label">
+                                    Can manage business settings and users
+                                </label>
+                            </div>
+                            {% if form.is_business_admin.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.is_business_admin.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label">Password *</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.password1.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password *</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.password2.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ title }}
+                            </button>
+                            <a href="{% url 'pos:user_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> User Roles</h5>
+            </div>
+            <div class="card-body">
+                <h6>Available Roles</h6>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h6><i class="fas fa-crown text-warning"></i> Admin</h6>
+                        <p class="mb-1">Full system access</p>
+                        <ul>
+                            <li>Manage all users</li>
+                            <li>Business settings</li>
+                            <li>All permissions</li>
+                            <li>View all reports</li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h6><i class="fas fa-user-tie text-info"></i> Manager</h6>
+                        <p class="mb-1">Business management</p>
+                        <ul>
+                            <li>Manage products</li>
+                            <li>View sales reports</li>
+                            <li>Manage categories</li>
+                            <li>Process sales</li>
+                        </ul>
+                    </div>
+                    <div class="list-group-item">
+                        <h6><i class="fas fa-cash-register text-success"></i> Cashier</h6>
+                        <p class="mb-1">Sales operations</p>
+                        <ul>
+                            <li>Process sales</li>
+                            <li>View own sales</li>
+                            <li>Basic reports</li>
+                            <li>Manage cart</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Security Tips:</strong>
+                    <ul>
+                        <li>Use strong passwords (8+ characters)</li>
+                        <li>Assign appropriate roles</li>
+                        <li>Regularly review user access</li>
+                        <li>Deactivate inactive users immediately</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

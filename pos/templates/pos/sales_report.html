@@ -1,0 +1,283 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Sales Report - SaleSmart POS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="fas fa-chart-line text-primary"></i> Sales Report
+    </h2>
+    <div class="text-muted">
+        <i class="fas fa-calendar"></i> {{ start_date|date:"M d, Y" }} - {{ end_date|date:"M d, Y" }}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-list text-primary"></i> Sales Transactions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Sale #</th>
+                                <th>Date</th>
+                                <th>Cashier</th>
+                                <th>Items</th>
+                                <th class="text-end">Subtotal</th>
+                                <th class="text-end">Tax</th>
+                                <th class="text-end">Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sale in sales %}
+                            <tr>
+                                <td>
+                                    <strong>{{ sale.sale_number }}</strong>
+                                </td>
+                                <td>{{ sale.sale_date|date:"M d, Y H:i" }}</td>
+                                <td>{{ sale.cashier.get_full_name|default:sale.cashier.username }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ sale.items.count }}</span>
+                                </td>
+                                <td class="text-end">Ksh {{ sale.subtotal|floatformat:2 }}</td>
+                                <td class="text-end">Ksh {{ sale.tax_amount|floatformat:2 }}</td>
+                                <td class="text-end fw-bold">Ksh {{ sale.total_amount|floatformat:2 }}</td>
+                                <td>
+                                    <span class="badge bg-{{ sale.payment_method|lower|cut:' ' }}">{{ sale.payment_method }}</span>
+                                </td>
+                                <td>
+                                    {% if sale.payment_status == 'Paid' %}
+                                    <span class="badge bg-success">{{ sale.payment_status }}</span>
+                                    {% elif sale.payment_status == 'Pending' %}
+                                    <span class="badge bg-warning">{{ sale.payment_status }}</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">{{ sale.payment_status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                    <div>No sales found</div>
+                                    <small>Try adjusting your date range or check back later</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-calculator text-success"></i> Summary
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="summary-stats p-3 bg-light rounded mb-3">
+                    <h6 class="text-primary mb-3">Sales Summary</h6>
+                    <div class="stat-item mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Total Sales:</span>
+                            <strong>{{ summary.count }}</strong>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Total Revenue:</span>
+                            <strong class="text-success">Ksh {{ summary.total_sales|floatformat:2 }}</strong>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Total Tax:</span>
+                            <strong class="text-info">Ksh {{ summary.total_tax|floatformat:2 }}</strong>
+                        </div>
+                    </div>
+                    <div class="stat-item mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Total Discount:</span>
+                            <strong class="text-warning">Ksh {{ summary.total_discount|floatformat:2 }}</strong>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Average Sale:</span>
+                            <strong class="text-primary">Ksh {{ summary.average_sale|floatformat:2 }}</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="export-section mt-3">
+                    <h6 class="text-primary mb-3">Export Options</h6>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel me-2"></i> Export to Excel
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="exportToPDF()">
+                            <i class="fas fa-file-pdf me-2"></i> Export to PDF
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i> Print Report
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Report Tips:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Use date filters to analyze specific periods</li>
+                        <li>Compare sales data across different time ranges</li>
+                        <li>Export reports for external analysis</li>
+                        <li>Track payment methods to optimize cash flow</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table th {
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover, .btn-outline-danger:hover, .btn-outline-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.summary-stats {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+}
+
+.stat-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.export-section .btn {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0 15px;
+    }
+    
+    .card {
+        margin-bottom: 20px;
+    }
+    
+    .col-lg-8, .col-lg-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .table-responsive {
+        font-size: 12px;
+    }
+    
+    .btn {
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .summary-stats {
+        padding: 20px;
+    }
+    
+    .stat-item {
+        padding: 12px 0;
+        font-size: 14px;
+    }
+    
+    h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    h5 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .table {
+        font-size: 11px;
+    }
+    
+    .stat-item {
+        padding: 10px 0;
+        font-size: 13px;
+    }
+}
+</style>
+
+<script>
+function exportToExcel() {
+    // Placeholder for Excel export functionality
+    alert('Excel export feature coming soon! This will download sales data in Excel format.');
+}
+
+function exportToPDF() {
+    // Placeholder for PDF export functionality
+    alert('PDF export feature coming soon! This will generate a printable PDF report.');
+}
+
+// Print functionality
+window.addEventListener('beforeprint', function() {
+    document.querySelectorAll('.btn, .alert').forEach(function(el) {
+        el.style.display = 'none';
+    });
+});
+
+window.addEventListener('afterprint', function() {
+    document.querySelectorAll('.btn, .alert').forEach(function(el) {
+        el.style.display = '';
+    });
+});
+</script>
+{% endblock %}

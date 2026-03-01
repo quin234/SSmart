@@ -1,0 +1,132 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Users - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>
+            <i class="fas fa-users"></i> Users
+            <small class="text-muted">{{ request.business.name }}</small>
+            <a href="{% url 'pos:user_create' %}" class="btn btn-primary btn-sm float-end">
+                <i class="fas fa-plus"></i> Add User
+            </a>
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if user.is_business_admin %}
+                                        <i class="fas fa-crown text-warning me-2"></i>
+                                        {% endif %}
+                                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">@{{ user.username }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if user.is_business_admin %}
+                                    <span class="badge bg-warning">Admin</span>
+                                    {% else %}
+                                    <span class="badge bg-{{ user.role|lower }}">{{ user.role }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.phone|default:'--' }}</td>
+                                <td>
+                                    {% if user.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.last_login_business %}
+                                    {{ user.last_login_business|date:"M d, Y H:i" }}
+                                    {% else %}
+                                    <span class="text-muted">Never</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    <i class="fas fa-users"></i> No users found
+                                    <br>
+                                    <small>Add your first user to get started</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-primary">{{ users|length }}</h5>
+                            <small>Total Users</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-success">{{ users|length }}</h5>
+                            <small>Active Users</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-info">{{ users|length }}</h5>
+                            <small>Admin Users</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h5 class="text-warning">{{ users|length }}</h5>
+                            <small>Max Users</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}{{ title }} - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>
+            <i class="fas fa-tags"></i> {{ title }}
+            <small class="text-muted">{{ request.business.name }}</small>
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-edit"></i> Category Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">Category Name *</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.name.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="{{ form.is_active.id_for_label }}" class="form-label">Active</label>
+                            {{ form.is_active }}
+                            {% if form.is_active.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.is_active.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.description.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ title }}
+                            </button>
+                            <a href="{% url 'pos:category_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Help</h5>
+            </div>
+            <div class="card-body">
+                <h6>Category Fields</h6>
+                <ul class="list-unstyled">
+                    <li><strong>Category Name:</strong> The display name of the category</li>
+                    <li><strong>Description:</strong> Optional details about the category</li>
+                    <li><strong>Active:</strong> Whether this category is available for products</li>
+                </ul>
+                
+                <h6 class="mt-3">Best Practices</h6>
+                <ul class="list-unstyled">
+                    <li>Use clear, descriptive names</li>
+                    <li>Keep descriptions concise but informative</li>
+                    <li>Group similar products together</li>
+                    <li>Deactivate instead of deleting if temporarily unused</li>
+                </ul>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>Tip:</strong> Categories help organize products and make them easier to find in the POS interface.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
