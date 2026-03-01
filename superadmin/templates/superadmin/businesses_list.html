@@ -1,0 +1,162 @@
+{% extends 'superadmin/base.html' %}
+
+{% block title %}Businesses - SuperAdmin Portal{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2>
+            <i class="fas fa-building me-2"></i>All Businesses
+        </h2>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <span>
+                <i class="fas fa-list me-2"></i>Business Registry
+            </span>
+            <span class="badge bg-primary">{{ businesses.count }} Total</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Business Name</th>
+                        <th>Contact</th>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th>Duration</th>
+                        <th>Users</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for business in businesses %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if business.logo %}
+                                <img src="{{ business.logo.url }}" alt="{{ business.name }}" 
+                                     class="rounded-circle me-2" width="32" height="32">
+                                {% else %}
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-2" 
+                                     style="width: 32px; height: 32px;">
+                                    <i class="fas fa-building text-white"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <strong>{{ business.name }}</strong>
+                                    {% if business.address %}
+                                    <br><small class="text-muted">{{ business.address }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if business.email %}
+                            <div>
+                                <i class="fas fa-envelope text-muted me-1"></i>
+                                <small>{{ business.email }}</small>
+                            </div>
+                            {% endif %}
+                            {% if business.phone %}
+                            <div>
+                                <i class="fas fa-phone text-muted me-1"></i>
+                                <small>{{ business.phone }}</small>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if business.subscription_plan == 'Free' %}bg-secondary
+                                {% elif business.subscription_plan == 'Pro' %}bg-primary
+                                {% else %}bg-warning{% endif %}">
+                                {{ business.subscription_plan }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if business.is_active %}status-active{% else %}status-inactive{% endif %}">
+                                {% if business.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>{{ business.duration_months }}</strong> months
+                                <br><small class="text-muted">{{ business.duration_days }} days</small>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ business.user_set.count }}</span>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>{{ business.created_at|date:"M d, Y" }}</strong>
+                                <br><small class="text-muted">{{ business.created_at|time:"g:i A" }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'superadmin:business_detail' business.id %}" 
+                                   class="btn btn-sm btn-outline-secondary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <form method="post" action="{% url 'superadmin:toggle_business_status' business.id %}" 
+                                      style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" 
+                                            class="btn btn-sm {% if business.is_active %}btn-warning{% else %}btn-success{% endif %}"
+                                            title="{% if business.is_active %}Deactivate{% else %}Activate{% endif %}"
+                                            onclick="return confirm('Are you sure you want to {% if business.is_active %}deactivate{% else %}activate{% endif %} this business?')">
+                                        <i class="fas {% if business.is_active %}fa-pause{% else %}fa-play{% endif %}"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                            <div>No businesses registered yet</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Summary -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ businesses.count }}</div>
+            <div class="stats-label">Total Businesses</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ active_businesses_count }}</div>
+            <div class="stats-label">Active Businesses</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ most_common_plan }}</div>
+            <div class="stats-label">Common Plan</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <div class="stats-number">{% if oldest_business %}{{ oldest_business.created_at|timesince }}{% else %}None{% endif %}</div>
+            <div class="stats-label">Oldest Business</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
