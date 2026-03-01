@@ -99,11 +99,16 @@
                                 </label>
                                 <div class="card border-2 border-success bg-success bg-opacity-10">
                                     <div class="card-body p-3">
-                                        <div class="text-center">
-                                            <span class="badge bg-success text-white px-3 py-2 mb-2">
-                                                <i class="fas fa-star me-1"></i> FREE PLAN
-                                            </span>
-                                            <p class="mb-0 text-muted small">Basic features included</p>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <span class="badge bg-success text-white px-3 py-2 mb-2">
+                                                    <i class="fas fa-star me-1"></i> FREE PLAN
+                                                </span>
+                                                <p class="mb-0 text-muted small">Basic features included</p>
+                                            </div>
+                                            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#upgradeModal">
+                                                <i class="fas fa-rocket me-2"></i> Upgrade
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -255,7 +260,7 @@
                     </div>
                 </div>
                 
-                <h6 class="text-primary mb-3">Subscription Plans</h6>
+                <!-- <h6 class="text-primary mb-3">Subscription Plans</h6>
                 <div class="subscription-plans">
                     <div class="plan-card {% if request.business.subscription_plan == 'Basic' %}active{% endif %}">
                         <div class="plan-header">
@@ -309,7 +314,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 
                 <div class="alert alert-info mt-3">
                     <i class="fas fa-lightbulb"></i>
@@ -322,8 +327,158 @@
     </div>
 </div>
 
+<!-- Upgrade Modal -->
+<div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white border-0">
+                <h5 class="modal-title fw-bold" id="upgradeModalLabel">
+                    <i class="fas fa-rocket me-2"></i>Upgrade Your Plan
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-crown fa-2x text-primary"></i>
+                    </div>
+                    <h4 class="fw-bold">Unlock Premium Features</h4>
+                    <p class="text-muted">Upgrade to access advanced features and grow your business</p>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-2 h-100">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0 fw-bold">
+                                    <i class="fas fa-star me-2"></i>PRO PLAN
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <h3 class="fw-bold text-warning">Ksh 200</h3>
+                                    <span class="text-muted">per month</span>
+                                </div>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Up to 20 users</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Advanced reporting</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>API access</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-2 border-primary h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0 fw-bold">
+                                    <i class="fas fa-crown me-2"></i>ENTERPRISE
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <h3 class="fw-bold text-primary">Ksh 1,200</h3>
+                                    <span class="text-muted">per month</span>
+                                </div>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Unlimited users</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Premium features</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>24/7 support</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom integrations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-info-circle me-2"></i>How to Upgrade
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded-circle p-2 me-3">
+                                    <strong>1</strong>
+                                </div>
+                                <div>
+                                    <strong>Make Payment</strong>
+                                    <p class="mb-0 small text-muted">Pay via M-Pesa or Bank Transfer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded-circle p-2 me-3">
+                                    <strong>2</strong>
+                                </div>
+                                <div>
+                                    <strong>Send Confirmation</strong>
+                                    <p class="mb-0 small text-muted">Email payment details to us</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-credit-card me-2"></i>Payment Details
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong>M-Pesa Till Number:</strong>
+                                    <div class="d-flex align-items-center mt-1">
+                                        <span class="h4 text-primary fw-bold me-2">5921405</span>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="copyTillNumber()">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong>Business Name:</strong>
+                                    <p class="mb-0">SalesSmart Solutions Ltd</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong>Bank Transfer:</strong>
+                                    <p class="mb-0 small">Equity Bank<br>Acc No: 1234567890<br>Branch: Karen</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong>Support Contact:</strong>
+                                    <p class="mb-0 small">
+                                        <i class="fas fa-phone me-1"></i> +254 700 123456<br>
+                                        <i class="fas fa-envelope me-1"></i> sales@salessmart.co.ke
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> Close
+                </button>
+                <button type="button" class="btn btn-primary" onclick="sendUpgradeEmail()">
+                    <i class="fas fa-envelope me-2"></i> Contact Support
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Toast Container -->
-<div class="position-fixed top-50 start-50 translate-middle" style="z-index: 9999">
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header bg-success text-white">
             <i class="fas fa-check-circle me-2"></i>

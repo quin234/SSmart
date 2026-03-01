@@ -3,208 +3,687 @@
 {% block title %}{{ title }} - SalesSmart POS{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h2>
-            <i class="fas fa-user-plus"></i> {{ title }}
-            <small class="text-muted">{{ request.business.name }}</small>
-        </h2>
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">
+                <i class="fas fa-user-plus text-primary"></i> {{ title }}
+            </h2>
+            <p class="text-muted mb-0 mt-1">
+                <i class="fas fa-building"></i> {{ request.business.name }}
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'pos:user_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-users me-2"></i> View All Users
+            </a>
+            <a href="{% url 'pos:dashboard' %}" class="btn btn-outline-primary">
+                <i class="fas fa-home me-2"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Form Section -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-gradient-primary text-white border-0 py-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-3 me-3">
+                            <i class="fas fa-user fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-1 fw-bold">User Information</h4>
+                            <p class="mb-0 opacity-75">Fill in the user details below</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" class="needs-validation" id="userForm">
+                        {% csrf_token %}
+                        
+                        <!-- Personal Information Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary fw-bold mb-3">
+                                    <i class="fas fa-user-circle me-2"></i>Personal Information
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.first_name.id_for_label }}" class="form-label fw-bold text-primary">
+                                        <i class="fas fa-user me-2"></i>First Name <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.first_name }}
+                                    {% if form.first_name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.first_name.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.last_name.id_for_label }}" class="form-label fw-bold text-primary">
+                                        <i class="fas fa-user me-2"></i>Last Name <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.last_name }}
+                                    {% if form.last_name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.last_name.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary fw-bold mb-3">
+                                    <i class="fas fa-address-card me-2"></i>Contact Information
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label fw-bold text-primary">
+                                        <i class="fas fa-envelope me-2"></i>Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.email.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label fw-bold text-primary">
+                                        <i class="fas fa-phone-alt me-2"></i>Phone Number
+                                    </label>
+                                    {{ form.phone }}
+                                    {% if form.phone.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.phone.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Account Information Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary fw-bold mb-3">
+                                    <i class="fas fa-cog me-2"></i>Account Information
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.username.id_for_label }}" class="form-label fw-bold text-primary">
+                                        <i class="fas fa-user me-2"></i>Username <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.username }}
+                                    {% if form.username.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.username.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.role.id_for_label }}" class="form-label fw-bold text-primary">
+                                        <i class="fas fa-user-tag me-2"></i>User Role <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.role }}
+                                    {% if form.role.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.role.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Password Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary fw-bold mb-3">
+                                    <i class="fas fa-lock me-2"></i>Security Settings
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.password1.id_for_label }}" class="form-label fw-bold text-primary">
+                                        <i class="fas fa-key me-2"></i>Password <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.password1 }}
+                                    {% if form.password1.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.password1.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text mt-2">
+                                        <i class="fas fa-info-circle text-primary"></i> 
+                                        Minimum 8 characters with uppercase, lowercase, and numbers
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.password2.id_for_label }}" class="form-label fw-bold text-primary">
+                                        <i class="fas fa-key me-2"></i>Confirm Password <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.password2 }}
+                                    {% if form.password2.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.password2.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Permissions Section -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary fw-bold mb-3">
+                                    <i class="fas fa-shield-alt me-2"></i>Permissions
+                                </h6>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <div class="card border-2 border-primary bg-primary bg-opacity-5">
+                                        <div class="card-body p-3">
+                                            <div class="form-check">
+                                                {{ form.is_business_admin }}
+                                                <label for="{{ form.is_business_admin.id_for_label }}" class="form-check-label fw-bold">
+                                                    <i class="fas fa-crown text-warning me-2"></i>
+                                                    Business Administrator
+                                                </label>
+                                            </div>
+                                            <div class="form-text mt-2">
+                                                <i class="fas fa-info-circle text-primary"></i>
+                                                Grant this user access to manage business settings, users, and perform administrative tasks
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if form.is_business_admin.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.is_business_admin.errors %}
+                                                <small class="d-flex align-items-center mt-1">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>{{ error }}
+                                                </small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="row mt-4 pt-3 border-top">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="confirmUser">
+                                        <label class="form-check-label" for="confirmUser">
+                                            I confirm that all user information is accurate
+                                        </label>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'pos:user_list' %}" class="btn btn-outline-secondary btn-lg">
+                                            <i class="fas fa-times me-2"></i> Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-primary btn-lg" disabled id="submitUserBtn">
+                                            <i class="fas fa-save me-2"></i> {{ title }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Information -->
+        <div class="col-lg-4">
+            <!-- User Roles Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-gradient-info text-white border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>User Roles
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="rolesAccordion">
+                        <div class="accordion-item border-0 mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#adminRole">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-crown text-warning me-2"></i>
+                                        <span class="fw-bold">Administrator</span>
+                                        <i class="fas fa-chevron-down ms-auto"></i>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="adminRole" class="accordion-collapse collapse show" data-bs-parent="#rolesAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Full system access</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manage all users</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Business settings</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>All permissions</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>View all reports</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item border-0 mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#managerRole">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-tie text-info me-2"></i>
+                                        <span class="fw-bold">Manager</span>
+                                        <i class="fas fa-chevron-down ms-auto"></i>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="managerRole" class="accordion-collapse collapse" data-bs-parent="#rolesAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Business management</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manage products</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>View sales reports</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manage categories</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Process sales</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cashierRole">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-cash-register text-success me-2"></i>
+                                        <span class="fw-bold">Cashier</span>
+                                        <i class="fas fa-chevron-down ms-auto"></i>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="cashierRole" class="accordion-collapse collapse" data-bs-parent="#rolesAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Sales operations</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Process sales</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>View own sales</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic reports</li>
+                                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manage cart</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Tips Card -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-gradient-warning text-dark border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Security Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-lightbulb me-2"></i>Best Practices
+                        </h6>
+                        <ul class="mb-0">
+                            <li class="mb-2">Use strong passwords (8+ characters)</li>
+                            <li class="mb-2">Include uppercase, lowercase, and numbers</li>
+                            <li class="mb-2">Assign appropriate roles based on job function</li>
+                            <li class="mb-2">Regularly review user access permissions</li>
+                            <li class="mb-2">Deactivate inactive users immediately</li>
+                            <li class="mb-0">Enable two-factor authentication when available</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="fas fa-user"></i> User Information</h5>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.username.id_for_label }}" class="form-label">Username *</label>
-                            {{ form.username }}
-                            {% if form.username.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.username.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">Email *</label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.email.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name *</label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.first_name.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-4">
-                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name *</label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.last_name.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-4">
-                            <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
-                            {{ form.phone }}
-                            {% if form.phone.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.phone.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.role.id_for_label }}" class="form-label">Role *</label>
-                            {{ form.role }}
-                            {% if form.role.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.role.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.is_business_admin.id_for_label }}" class="form-label">Business Admin</label>
-                            <div class="form-check">
-                                {{ form.is_business_admin }}
-                                <label for="{{ form.is_business_admin.id_for_label }}" class="form-check-label">
-                                    Can manage business settings and users
-                                </label>
-                            </div>
-                            {% if form.is_business_admin.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.is_business_admin.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.password1.id_for_label }}" class="form-label">Password *</label>
-                            {{ form.password1 }}
-                            {% if form.password1.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.password1.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password *</label>
-                            {{ form.password2 }}
-                            {% if form.password2.errors %}
-                                <div class="text-danger">
-                                    {% for error in form.password2.errors %}
-                                        <small>{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> {{ title }}
-                            </button>
-                            <a href="{% url 'pos:user_list' %}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+<!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            User created successfully!
         </div>
     </div>
     
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="fas fa-info-circle"></i> User Roles</h5>
-            </div>
-            <div class="card-body">
-                <h6>Available Roles</h6>
-                <div class="list-group">
-                    <div class="list-group-item">
-                        <h6><i class="fas fa-crown text-warning"></i> Admin</h6>
-                        <p class="mb-1">Full system access</p>
-                        <ul>
-                            <li>Manage all users</li>
-                            <li>Business settings</li>
-                            <li>All permissions</li>
-                            <li>View all reports</li>
-                        </ul>
-                    </div>
-                    <div class="list-group-item">
-                        <h6><i class="fas fa-user-tie text-info"></i> Manager</h6>
-                        <p class="mb-1">Business management</p>
-                        <ul>
-                            <li>Manage products</li>
-                            <li>View sales reports</li>
-                            <li>Manage categories</li>
-                            <li>Process sales</li>
-                        </ul>
-                    </div>
-                    <div class="list-group-item">
-                        <h6><i class="fas fa-cash-register text-success"></i> Cashier</h6>
-                        <p class="mb-1">Sales operations</p>
-                        <ul>
-                            <li>Process sales</li>
-                            <li>View own sales</li>
-                            <li>Basic reports</li>
-                            <li>Manage cart</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="alert alert-info mt-3">
-                    <i class="fas fa-lightbulb"></i>
-                    <strong>Security Tips:</strong>
-                    <ul>
-                        <li>Use strong passwords (8+ characters)</li>
-                        <li>Assign appropriate roles</li>
-                        <li>Regularly review user access</li>
-                        <li>Deactivate inactive users immediately</li>
-                    </ul>
-                </div>
-            </div>
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-danger text-white">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Please check the form for errors
         </div>
     </div>
 </div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.card {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0,0.12);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0,0.15);
+}
+
+.card-header {
+    border-radius: 16px 16px 0 0 !important;
+    border: none;
+}
+
+.form-control, .form-select {
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    padding: 16px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+    background-color: #fff;
+    transform: translateY(-1px);
+}
+
+.form-label {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+}
+
+.form-group {
+    position: relative;
+}
+
+.btn {
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5a6fd8, #6a4190);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+    background: #6c757d;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-lg {
+    padding: 16px 32px;
+    font-size: 16px;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+.form-text {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.accordion-button {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.accordion-button:hover {
+    background-color: #f8f9fa;
+}
+
+.accordion-collapse {
+    border: none;
+}
+
+.accordion-body {
+    padding: 16px;
+}
+
+.list-unstyled {
+    padding-left: 0;
+    list-style: none;
+}
+
+.list-unstyled li {
+    padding: 4px 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0 20px;
+    }
+    
+    .card {
+        margin-bottom: 24px;
+        border-radius: 12px;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column !important;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+    
+    .form-control, .form-select {
+        font-size: 16px;
+        padding: 18px 20px;
+        border-radius: 10px;
+    }
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-group {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.form-group:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.form-group:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.form-group:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.form-group:nth-child(5) {
+    animation-delay: 0.4s;
+}
+</style>
+
+<script>
+// Bootstrap form validation
+(function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                showErrorToast();
+            }
+        }, false);
+    });
+})();
+
+// Confirmation checkbox functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmCheckbox = document.getElementById('confirmUser');
+    const submitBtn = document.getElementById('submitUserBtn');
+    
+    if (confirmCheckbox && submitBtn) {
+        confirmCheckbox.addEventListener('change', function() {
+            submitBtn.disabled = !this.checked;
+        });
+    }
+});
+
+// Toast functions
+function showSuccessToast(message) {
+    const toastEl = document.getElementById('successToast');
+    const toastBody = toastEl.querySelector('.toast-body');
+    toastBody.textContent = message;
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+}
+
+function showErrorToast(message) {
+    const toastEl = document.getElementById('errorToast');
+    const toastBody = toastEl.querySelector('.toast-body');
+    toastBody.textContent = message;
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+}
+</script>
 {% endblock %}
