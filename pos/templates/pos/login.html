@@ -4,52 +4,115 @@
 {% block title %}{{ business_name }} POS - Login{% endblock %}
 
 {% block login_content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow-lg border-0">
-            <div class="card-body p-4">
-                <div class="text-center mb-4">
-                    <img src="{% static 'pos/images/iconSales.ico' %}" alt="Logo" class="login-logo mb-3">
-                    <h2 class="fw-bold text-primary">{{ business_name }} POS</h2>
-                    <h4 class="text-muted mb-0">Welcome Back</h4>
-                    <p class="text-muted small">Please login to your account</p>
+<div class="login-container">
+    <div class="login-background">
+        <div class="login-card">
+            <!-- Left Side - Branding -->
+            <div class="login-left">
+                <div class="brand-section">
+                    <div class="logo-container">
+                        <img src="{% static 'pos/images/iconSales.ico' %}" alt="{{ business_name }} Logo" class="brand-logo">
+                    </div>
+                    <h1 class="brand-title">{{ business_name }} POS</h1>
+                    <p class="brand-subtitle">Modern Point of Sale System</p>
+                    <div class="feature-highlights">
+                        <div class="feature-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Secure Login</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Fast Dashboard</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Real-time Analytics</span>
+                        </div>
+                    </div>
                 </div>
-                
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        {{ form.errors }}
+            </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="login-right">
+                <div class="login-form-container">
+                    <div class="login-header">
+                        <h2>Welcome Back</h2>
+                        <p>Sign in to access your dashboard</p>
                     </div>
-                {% endif %}
-                
-                <form method="post">
-                    {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">
-                            <i class="fas fa-user me-2"></i>Username
-                        </label>
-                        {{ form.username }}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">
-                            <i class="fas fa-lock me-2"></i>Password
-                        </label>
-                        {{ form.password }}
-                    </div>
-                    
-                    <div class="d-grid gap-2 mb-3">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
+
+                    {% if form.errors %}
+                        <div class="error-alert">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div class="error-content">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="message-alert {{ message.tags }}">
+                                <i class="fas fa-{% if 'error' in message.tags %}exclamation-triangle{% elif 'success' in message.tags %}check-circle{% else %}info-circle{% endif %}"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" class="login-form" id="loginForm">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">
+                                <i class="fas fa-user"></i>
+                                Username
+                            </label>
+                            <div class="input-container">
+                                {{ form.username }}
+                                <div class="input-focus-border"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Password
+                            </label>
+                            <div class="input-container">
+                                {{ form.password }}
+                                <button type="button" class="password-toggle" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="passwordIcon"></i>
+                                </button>
+                                <div class="input-focus-border"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-options">
+                            <div class="remember-me">
+                                <input type="checkbox" id="remember" name="remember">
+                                <label for="remember">Remember me</label>
+                            </div>
+                            <a href="#" class="forgot-password">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="login-btn" id="loginBtn">
+                            <span class="btn-text">Sign In</span>
+                            <div class="btn-loader" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </button>
+                    </form>
+
+                    <div class="login-footer">
+                        <p>Don't have an account?</p>
+                        <button class="signup-link" onclick="showSignupModal()">
+                            <i class="fas fa-user-plus"></i>
+                            Start Free Trial
                         </button>
                     </div>
-                </form>
-                
-                <hr class="my-4">
-                <div class="text-center">
-                    <small class="text-muted">
-                        Don't have an account? <a href="/" class="text-decoration-none">Sign up here</a>
-                    </small>
                 </div>
             </div>
         </div>
@@ -57,54 +120,477 @@
 </div>
 
 <style>
-.login-logo {
+/* Modern Login Page Styles */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-background {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
+}
+
+.login-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,154.7C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+    background-size: cover;
+}
+
+.login-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 600px;
+    max-width: 1000px;
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.login-left {
+    background: linear-gradient(135deg, #0056b3, #003d82);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    position: relative;
+}
+
+.login-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.03" d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,96C960,107,1056,149,1152,154.7C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat center;
+    background-size: cover;
+}
+
+.brand-section {
+    text-align: center;
+    max-width: 400px;
+}
+
+.logo-container {
+    margin-bottom: 30px;
+}
+
+.brand-logo {
     width: 80px;
     height: 80px;
     object-fit: contain;
+    filter: brightness(0) invert(1);
 }
 
-.card {
-    border-radius: 15px;
-    border: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+.brand-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #ffc107, #ffb300);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.brand-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 40px;
+}
+
+.feature-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+.feature-item i {
+    font-size: 1.2rem;
+    color: #ffc107;
+    width: 30px;
+}
+
+.login-right {
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 1rem;
+}
+
+.error-alert {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+.message-alert {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+.message-alert.success {
+    background: #d1e7dd;
+    border: 1px solid #badbcc;
+    color: #0f5132;
+}
+
+.message-alert.error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.message-alert.info {
+    background: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+}
+
+.error-content {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    color: #0056b3;
+    width: 20px;
+}
+
+.input-container {
+    position: relative;
 }
 
 .form-control {
-    border-radius: 10px;
-    padding: 12px 15px;
+    width: 100%;
+    padding: 15px 20px;
     border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
     transition: all 0.3s ease;
+    background: #f8f9fa;
 }
 
 .form-control:focus {
-    border-color: #0d6efd;
+    border-color: #0056b3;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    background: white;
+    outline: none;
 }
 
-.btn-primary {
-    border-radius: 10px;
-    padding: 12px 20px;
-    font-weight: 600;
-    background: linear-gradient(135deg, #0d6efd, #0056b3);
+.input-focus-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #0056b3;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.form-control:focus + .input-focus-border {
+    transform: scaleX(1);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
     border: none;
-    transition: all 0.3s ease;
+    color: #666;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color 0.3s ease;
 }
 
-.btn-primary:hover {
-    background: linear-gradient(135deg, #0056b3, #004085);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+.password-toggle:hover {
+    color: #0056b3;
 }
 
-.fw-semibold {
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #0056b3;
+}
+
+.forgot-password {
+    color: #0056b3;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #003d82;
+    text-decoration: underline;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #0056b3, #003d82);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
     font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
+.login-btn:hover {
+    background: linear-gradient(135deg, #003d82, #002751);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 86, 179, 0.3);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-text {
+    transition: opacity 0.3s ease;
+}
+
+.login-btn:disabled .btn-text {
+    opacity: 0;
+}
+
+.btn-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.login-footer p {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.signup-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #0056b3;
+    background: none;
+    border: none;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.signup-link:hover {
+    background: rgba(0, 86, 179, 0.1);
+    color: #003d82;
+    transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-    .login-logo {
-        width: 60px;
-        height: 60px;
+    .login-container {
+        padding: 10px;
+    }
+    
+    .login-card {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        max-width: 400px;
+    }
+    
+    .login-left {
+        display: none;
+    }
+    
+    .login-right {
+        padding: 30px 20px;
+    }
+    
+    .brand-title {
+        font-size: 2rem;
+    }
+    
+    .login-header h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-options {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .login-form-container {
+        max-width: 100%;
     }
 }
 </style>
+
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById('{{ form.password.id_for_label }}');
+    const passwordIcon = document.getElementById('passwordIcon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        passwordIcon.className = 'fas fa-eye-slash';
+    } else {
+        passwordField.type = 'password';
+        passwordIcon.className = 'fas fa-eye';
+    }
+}
+
+// Show signup modal function
+function showSignupModal() {
+    // Redirect to marketing page to show signup modal
+    window.location.href = '/#signup';
+}
+
+// Form submission handling
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    const btn = document.getElementById('loginBtn');
+    const btnText = btn.querySelector('.btn-text');
+    const btnLoader = btn.querySelector('.btn-loader');
+    
+    // Show loading state
+    btn.disabled = true;
+    btnText.style.opacity = '0';
+    btnLoader.style.display = 'block';
+});
+
+// Add input focus effects
+document.querySelectorAll('.form-control').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'scale(1.02)';
+    });
+    
+    input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'scale(1)';
+    });
+});
+</script>
 {% endblock %}

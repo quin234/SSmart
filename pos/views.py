@@ -31,8 +31,14 @@ from .decorators import business_required, business_admin_required
 
 
 class CustomLoginView(DjangoLoginView):
-    """Custom login view that passes business context to the template"""
+    """Custom login view that passes business context to template"""
     template_name = 'pos/login.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        # Redirect authenticated users to POS interface
+        if request.user.is_authenticated:
+            return redirect('pos:pos_interface')
+        return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1103,7 +1109,10 @@ def generic_create_handler(request):
 
 
 def marketing_page(request):
-    """Marketing landing page"""
+    """Marketing landing page - redirect authenticated users to POS"""
+    if request.user.is_authenticated:
+        # Redirect authenticated users to POS interface
+        return redirect('pos:pos_interface')
     return render(request, 'pos/marketing.html')
 
 
