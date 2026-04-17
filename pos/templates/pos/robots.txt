@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /login/
+Disallow: /logout/
+Disallow: /verify-email/
+Disallow: /superadmin/
+Disallow: /api/
+Disallow: /static/
+Disallow: /media/
+Disallow: /pos/sale/
+Disallow: /pos/expense/
+Disallow: /pos/reports/
+Disallow: /pos/profit-loss/
+Disallow: /pos/inventory-management/
+Disallow: /pos/database-management/
+Disallow: /pos/user/
+Disallow: /pos/settings/
+
+# Allow specific important paths
+Allow: /signup/
+Allow: /pos/
+Allow: /pos/dashboard/
+Allow: /pos/product/
+Allow: /pos/category/
+Allow: /pos/business-profile/
+
+# Sitemap location
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1

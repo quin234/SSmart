@@ -1,0 +1,390 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Database Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-database me-2"></i>Database Management</h2>
+                <a href="{% url 'pos:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <!-- Toast messages will be inserted here -->
+    </div>
+
+    <!-- Backup Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-download me-2"></i>Database Backup</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Create a backup of your entire database. This will download a copy of your database file to your computer.</p>
+                    <form method="post" action="{% url 'pos:database_backup' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-download me-2"></i>Download Database Backup
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restore Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Database Restore</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Restore database from a backup file. This will replace all current data with the backup data.</p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action will overwrite all current data. A safety backup will be created automatically.
+                    </div>
+                    <form method="post" enctype="multipart/form-data" action="{% url 'pos:database_restore' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="backup_file" class="form-label">Select Backup File (.sqlite3)</label>
+                            <input type="file" class="form-control" id="backup_file" name="backup_file" accept=".sqlite3" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-upload me-2"></i>Restore Database
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Deletion Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-trash-alt me-2"></i>Data Deletion</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Permanently delete data from your database. These actions cannot be undone.</p>
+                    
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> Data deletion is permanent and cannot be undone. Consider creating a backup before deleting data.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-danger">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-danger">Delete All Data</h6>
+                                    <p class="card-text small text-muted">Clear all data from the entire database</p>
+                                    <button type="button" class="btn btn-danger" onclick="confirmClearData('all')">
+                                        <i class="fas fa-trash me-2"></i>Delete All Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-warning">Delete Products</h6>
+                                    <p class="card-text small text-muted">Clear all products and categories</p>
+                                    <button type="button" class="btn btn-warning" onclick="confirmClearData('products')">
+                                        <i class="fas fa-box me-2"></i>Delete Products
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-info">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-info">Delete Sales</h6>
+                                    <p class="card-text small text-muted">Clear all sales records</p>
+                                    <button type="button" class="btn btn-info" onclick="confirmClearData('sales')">
+                                        <i class="fas fa-chart-line me-2"></i>Delete Sales
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-secondary">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-secondary">Delete Expenses</h6>
+                                    <p class="card-text small text-muted">Clear all expense records</p>
+                                    <button type="button" class="btn btn-secondary" onclick="confirmClearData('expenses')">
+                                        <i class="fas fa-receipt me-2"></i>Delete Expenses
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Database Statistics -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Database Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-primary">{{ stats.products }}</h4>
+                                <p class="mb-0">Products</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-success">{{ stats.sales }}</h4>
+                                <p class="mb-0">Sales</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-warning">{{ stats.expenses }}</h4>
+                                <p class="mb-0">Expenses</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-info">{{ stats.categories }}</h4>
+                                <p class="mb-0">Categories</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Data Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to proceed? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'pos:database_clear' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="clear_type" id="clearTypeInput">
+                    <button type="submit" class="btn btn-danger" id="confirmButton">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: none;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.text-center h4 {
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.border-danger {
+    border-color: #dc3545 !important;
+}
+
+.border-warning {
+    border-color: #ffc107 !important;
+}
+
+.border-info {
+    border-color: #0dcaf0 !important;
+}
+
+.border-secondary {
+    border-color: #6c757d !important;
+}
+
+/* Toast Styles */
+.toast {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+}
+
+.toast-header {
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.toast-body {
+    border-radius: 0 0 8px 8px;
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.modal-header {
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.modal-footer {
+    border-radius: 0 0 12px 12px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+</style>
+
+<script>
+// Toast notification system
+function showToast(message, type = 'info') {
+    const toastContainer = document.querySelector('.toast-container');
+    const toastId = 'toast-' + Date.now();
+    
+    const bgClass = {
+        'success': 'bg-success',
+        'error': 'bg-danger',
+        'warning': 'bg-warning',
+        'info': 'bg-info'
+    }[type] || 'bg-info';
+    
+    const icon = {
+        'success': 'fas fa-check-circle',
+        'error': 'fas fa-exclamation-circle',
+        'warning': 'fas fa-exclamation-triangle',
+        'info': 'fas fa-info-circle'
+    }[type] || 'fas fa-info-circle';
+    
+    const toastHTML = `
+        <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="${icon} me-2"></i>${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, {
+        autohide: true,
+        delay: 5000
+    });
+    
+    toast.show();
+    
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
+}
+
+// Show Django messages as toasts
+document.addEventListener('DOMContentLoaded', function() {
+    {% for message in messages %}
+        showToast("{{ message|escapejs }}", "{{ message.tags }}");
+    {% endfor %}
+});
+
+// Confirm data deletion
+function confirmClearData(type) {
+    const messages = {
+        'all': 'Are you sure you want to delete ALL data? This action cannot be undone.',
+        'products': 'Are you sure you want to delete all products and categories? This action cannot be undone.',
+        'sales': 'Are you sure you want to delete all sales records? This action cannot be undone.',
+        'expenses': 'Are you sure you want to delete all expense records? This action cannot be undone.'
+    };
+    
+    document.getElementById('confirmMessage').textContent = messages[type] || messages['all'];
+    document.getElementById('clearTypeInput').value = type;
+    
+    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    modal.show();
+}
+
+// Handle form submissions with loading states
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            
+            // Re-enable after 10 seconds in case of issues
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }, 10000);
+        }
+    });
+});
+</script>
+{% endblock %}

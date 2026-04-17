@@ -1,0 +1,252 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Business Settings - SaleSmart POS{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <i class="fas fa-cog text-primary"></i> Business Settings
+            </h2>
+            <div class="text-muted">
+                <i class="fas fa-building"></i> {{ business.name }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-sliders-h text-primary"></i> General Settings
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Tax Settings Section -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-calculator"></i> Tax Configuration
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check form-switch mb-3">
+                                    {{ form.enable_tax }}
+                                    <label class="form-check-label" for="{{ form.enable_tax.id_for_label }}">
+                                        <strong>{{ form.enable_tax.label }}</strong>
+                                        <small class="d-block text-muted">{{ form.enable_tax.help_text }}</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="tax-settings" class="row {% if not form.enable_tax.value %}d-none{% endif %}">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.tax_name.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.tax_name.label }}
+                                    </label>
+                                    {{ form.tax_name }}
+                                    <small class="form-text text-muted">{{ form.tax_name.help_text }}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.tax_rate.id_for_label }}" class="form-label fw-bold">
+                                        {{ form.tax_rate.label }}
+                                    </label>
+                                    <div class="input-group">
+                                        {{ form.tax_rate }}
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <small class="form-text text-muted">{{ form.tax_rate.help_text }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Daraja API Settings Section -->
+                    <div class="mb-4">
+                        <h6 class="text-success mb-3">
+                            <i class="fas fa-mobile-alt"></i> Daraja API Configuration (M-Pesa)
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check form-switch mb-3">
+                                    {{ form.enable_daraja }}
+                                    <label class="form-check-label" for="{{ form.enable_daraja.id_for_label }}">
+                                        <strong>{{ form.enable_daraja.label }}</strong>
+                                        <small class="d-block text-muted">{{ form.enable_daraja.help_text }}</small>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div id="daraja-settings" class="row {% if not form.enable_daraja.value %}d-none{% endif %}">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ form.daraja_consumer_key.id_for_label }}" class="form-label fw-bold">
+                                            {{ form.daraja_consumer_key.label }}
+                                        </label>
+                                        {{ form.daraja_consumer_key }}
+                                        <small class="form-text text-muted">{{ form.daraja_consumer_key.help_text }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ form.daraja_consumer_secret.id_for_label }}" class="form-label fw-bold">
+                                            {{ form.daraja_consumer_secret.label }}
+                                        </label>
+                                        {{ form.daraja_consumer_secret }}
+                                        <small class="form-text text-muted">{{ form.daraja_consumer_secret.help_text }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ form.daraja_passkey.id_for_label }}" class="form-label fw-bold">
+                                            {{ form.daraja_passkey.label }}
+                                        </label>
+                                        {{ form.daraja_passkey }}
+                                        <small class="form-text text-muted">{{ form.daraja_passkey.help_text }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ form.daraja_shortcode.id_for_label }}" class="form-label fw-bold">
+                                            {{ form.daraja_shortcode.label }}
+                                        </label>
+                                        {{ form.daraja_shortcode }}
+                                        <small class="form-text text-muted">{{ form.daraja_shortcode.help_text }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ form.daraja_initiator_name.id_for_label }}" class="form-label fw-bold">
+                                            {{ form.daraja_initiator_name.label }}
+                                        </label>
+                                        {{ form.daraja_initiator_name }}
+                                        <small class="form-text text-muted">{{ form.daraja_initiator_name.help_text }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="{{ form.daraja_callback_url.id_for_label }}" class="form-label fw-bold">
+                                            {{ form.daraja_callback_url.label }}
+                                        </label>
+                                        {{ form.daraja_callback_url }}
+                                        <small class="form-text text-muted">{{ form.daraja_callback_url.help_text }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle text-info"></i> Settings Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="fw-bold">Tax Settings</h6>
+                    <p class="text-muted small">
+                        Configure how taxes are calculated and displayed in your sales. 
+                        When enabled, tax will be automatically added to all sales transactions.
+                    </p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="fw-bold">Current Configuration</h6>
+                    <ul class="list-unstyled small">
+                        <li><strong>Status:</strong> 
+                            <span class="badge {% if business.enable_tax %}bg-success{% else %}bg-secondary{% endif %}">
+                                {% if business.enable_tax %}Enabled{% else %}Disabled{% endif %}
+                            </span>
+                        </li>
+                        <li><strong>Tax Name:</strong> {{ business.tax_name|default:"Not set" }}</li>
+                        <li><strong>Tax Rate:</strong> {% if business.enable_tax %}{{ business.tax_rate }}%{% else %}N/A{% endif %}</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-info small">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    <strong>Tip:</strong> Changes to tax settings will apply to all new sales immediately. 
+                    Existing sales will not be affected.
+                </div>
+            </div>
+        </div>
+        
+        <div class="card border-0 shadow-sm mt-3">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-link text-primary"></i> Quick Links
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'pos:business_profile' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-user me-2"></i>Business Profile
+                    </a>
+                    <a href="{% url 'pos:user_list' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-users me-2"></i>User Management
+                    </a>
+                    <a href="{% url 'pos:dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const enableTaxCheckbox = document.getElementById('{{ form.enable_tax.id_for_label }}');
+    const taxSettingsDiv = document.getElementById('tax-settings');
+    
+    function toggleTaxSettings() {
+        if (enableTaxCheckbox.checked) {
+            taxSettingsDiv.classList.remove('d-none');
+        } else {
+            taxSettingsDiv.classList.add('d-none');
+        }
+    }
+    
+    enableTaxCheckbox.addEventListener('change', toggleTaxSettings);
+    toggleTaxSettings(); // Initialize on page load
+    
+    // Daraja settings toggle
+    const enableDarajaCheckbox = document.getElementById('{{ form.enable_daraja.id_for_label }}');
+    const darajaSettingsDiv = document.getElementById('daraja-settings');
+    
+    function toggleDarajaSettings() {
+        if (enableDarajaCheckbox.checked) {
+            darajaSettingsDiv.classList.remove('d-none');
+        } else {
+            darajaSettingsDiv.classList.add('d-none');
+        }
+    }
+    
+    if (enableDarajaCheckbox && darajaSettingsDiv) {
+        enableDarajaCheckbox.addEventListener('change', toggleDarajaSettings);
+        toggleDarajaSettings(); // Initialize on page load
+    }
+});
+</script>
+{% endblock %}

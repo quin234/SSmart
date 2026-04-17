@@ -1,0 +1,322 @@
+{% extends 'pos/base.html' %}
+
+{% block title %}Inventory Management - SalesSmart POS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="fas fa-warehouse text-primary"></i> Inventory Management
+    </h2>
+    <div class="text-muted">
+        <i class="fas fa-building"></i> {{ request.business.name }}
+    </div>
+</div>
+
+<!-- Inventory Statistics -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary bg-opacity-10 rounded p-3">
+                            <i class="fas fa-box text-primary fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Total Products</h6>
+                        <h4 class="mb-0">{{ total_products }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-warning bg-opacity-10 rounded p-3">
+                            <i class="fas fa-exclamation-triangle text-warning fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Low Stock Items</h6>
+                        <h4 class="mb-0 text-warning">{{ low_stock_count }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-danger bg-opacity-10 rounded p-3">
+                            <i class="fas fa-times-circle text-danger fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Out of Stock</h6>
+                        <h4 class="mb-0 text-danger">{{ out_of_stock_count }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success bg-opacity-10 rounded p-3">
+                            <i class="fas fa-dollar-sign text-success fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Stock Value</h6>
+                        <h4 class="mb-0 text-success">Ksh {{ total_stock_value|floatformat:2 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Smart Restocking Recommendations -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-lightbulb text-warning"></i> Smart Restocking Recommendations
+            </h5>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="filterRecommendations('all')">
+                    All
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="filterRecommendations('critical')">
+                    Critical
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-warning" onclick="filterRecommendations('high')">
+                    High Priority
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-info" onclick="filterRecommendations('medium')">
+                    Medium
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if restock_recommendations %}
+        <div class="table-responsive">
+            <table class="table table-hover" id="restockTable">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Current Stock</th>
+                        <th>Total Sold</th>
+                        <th>Status</th>
+                        <th>Urgency</th>
+                        <th>Suggested Order</th>
+                        <th>Reason</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recommendation in restock_recommendations %}
+                    <tr data-urgency="{{ recommendation.urgency }}">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <strong>{{ recommendation.product.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ recommendation.product.category.name|default:"No Category" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge {% if recommendation.current_stock == 0 %}bg-danger{% elif recommendation.current_stock <= recommendation.product.low_stock_threshold %}bg-warning{% else %}bg-success{% endif %}">
+                                {{ recommendation.current_stock }}
+                            </span>
+                        </td>
+                        <td>{{ recommendation.total_sold }}</td>
+                        <td>
+                            {% if recommendation.status == 'out_of_stock' %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                            {% elif recommendation.status == 'low_stock' %}
+                                <span class="badge bg-warning">Low Stock</span>
+                            {% elif recommendation.status == 'high_demand' %}
+                                <span class="badge bg-info">High Demand</span>
+                            {% elif recommendation.status == 'slow_moving' %}
+                                <span class="badge bg-secondary">Slow Moving</span>
+                            {% else %}
+                                <span class="badge bg-success">Normal</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if recommendation.urgency == 'critical' %}
+                                <span class="badge bg-danger">Critical</span>
+                            {% elif recommendation.urgency == 'high' %}
+                                <span class="badge bg-warning">High</span>
+                            {% elif recommendation.urgency == 'medium' %}
+                                <span class="badge bg-info">Medium</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Low</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if recommendation.suggested_order > 0 %}
+                                <strong class="text-primary">{{ recommendation.suggested_order }}</strong> units
+                            {% else %}
+                                <span class="text-muted">No order needed</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ recommendation.reason }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'pos:product_edit' recommendation.product.id %}" class="btn btn-outline-primary" title="Edit Product">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if recommendation.suggested_order > 0 %}
+                                <button class="btn btn-outline-success" onclick="createPurchaseOrder({{ recommendation.product.id }}, {{ recommendation.suggested_order }})" title="Create Purchase Order">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+            <h5>All Products Are Well Stocked!</h5>
+            <p class="text-muted">No restocking recommendations at this time.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt text-warning"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="d-grid">
+                            <button class="btn btn-primary" onclick="bulkRestock()">
+                                <i class="fas fa-truck me-2"></i>Bulk Restock Critical Items
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-grid">
+                            <button class="btn btn-info" onclick="exportInventory()">
+                                <i class="fas fa-download me-2"></i>Export Inventory Report
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-grid">
+                            <button class="btn btn-warning" onclick="adjustLowStockThresholds()">
+                                <i class="fas fa-cog me-2"></i>Adjust Stock Thresholds
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-grid">
+                            <a href="{% url 'pos:product_create' %}" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Add New Product
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterRecommendations(urgency) {
+    const rows = document.querySelectorAll('#restockTable tbody tr');
+    
+    rows.forEach(row => {
+        if (urgency === 'all') {
+            row.style.display = '';
+        } else {
+            row.style.display = row.dataset.urgency === urgency ? '' : 'none';
+        }
+    });
+}
+
+function createPurchaseOrder(productId, quantity) {
+    if (confirm(`Create purchase order for ${quantity} units of this product?`)) {
+        // TODO: Implement purchase order creation
+        alert('Purchase order functionality coming soon!');
+    }
+}
+
+function bulkRestock() {
+    const criticalItems = document.querySelectorAll('#restockTable tbody tr[data-urgency="critical"]');
+    if (criticalItems.length === 0) {
+        alert('No critical items to restock.');
+        return;
+    }
+    
+    if (confirm(`Create purchase orders for ${criticalItems.length} critical items?`)) {
+        // TODO: Implement bulk restocking
+        alert('Bulk restocking functionality coming soon!');
+    }
+}
+
+function exportInventory() {
+    // TODO: Implement inventory export
+    alert('Inventory export functionality coming soon!');
+}
+
+function adjustLowStockThresholds() {
+    // TODO: Implement threshold adjustment
+    alert('Stock threshold adjustment functionality coming soon!');
+}
+
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+
+<style>
+.urgency-critical {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.urgency-high {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.urgency-medium {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.urgency-low {
+    background-color: rgba(108, 117, 125, 0.1);
+}
+</style>
+{% endblock %}
