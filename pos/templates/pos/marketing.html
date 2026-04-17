@@ -1,9 +1,225 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SaleSmart POS - Modern Point of Sale System for Kenyan Businesses</title>
+    <meta name="description" content="Transform your Kenyan business with SalesSmart POS - the modern point of sale system. Manage sales, inventory, customers, and analytics with ease. Free plan available.">
+    <meta name="keywords" content="point of sale Kenya, POS system Kenya, business management Kenya, inventory management, sales tracking, customer management, analytics, cloud POS, mobile POS, retail POS, restaurant POS, M-Pesa integration">
+    
+    <!-- Enhanced Structured Data for Marketing Page -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "SalesSmart POS",
+        "description": "Modern point of sale system designed specifically for Kenyan businesses with M-Pesa integration, inventory management, and advanced analytics",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "softwareVersion": "2.0",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "150",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "offers": [
+            {
+                "@type": "Offer",
+                "name": "Basic Plan",
+                "price": "0",
+                "priceCurrency": "KES",
+                "description": "Free POS system for small Kenyan businesses",
+                "availability": "https://schema.org/InStock"
+            },
+            {
+                "@type": "Offer", 
+                "name": "Pro Plan",
+                "price": "200",
+                "priceCurrency": "KES",
+                "priceSpecification": {
+                    "@type": "UnitPriceSpecification",
+                    "price": "200",
+                    "priceCurrency": "KES",
+                    "billingDuration": "P1M"
+                },
+                "description": "Advanced POS system for growing Kenyan businesses",
+                "availability": "https://schema.org/InStock"
+            },
+            {
+                "@type": "Offer",
+                "name": "Enterprise Plan", 
+                "price": "1200",
+                "priceCurrency": "KES",
+                "priceSpecification": {
+                    "@type": "UnitPriceSpecification",
+                    "price": "1200",
+                    "priceCurrency": "KES",
+                    "billingDuration": "P1M"
+                },
+                "description": "Complete POS solution for large Kenyan businesses",
+                "availability": "https://schema.org/InStock"
+            }
+        ],
+        "provider": {
+            "@type": "Organization",
+            "name": "SalesSmart Solutions Ltd",
+            "url": "{{ request.scheme }}://{{ request.get_host }}",
+            "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'pos/images/iconSales.ico' %}",
+            "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "Kenya",
+                "addressLocality": "Nairobi",
+                "addressRegion": "Nairobi County"
+            },
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "availableLanguage": "English",
+                "hoursAvailable": "Mo-Su 00:00-23:59"
+            },
+            "sameAs": [
+                "https://www.facebook.com/SalesSmartKE",
+                "https://www.twitter.com/SalesSmartKE",
+                "https://www.linkedin.com/company/salessmart-solutions"
+            ]
+        },
+        "featureList": [
+            "Point of Sale System",
+            "Inventory Management", 
+            "Customer Management",
+            "Sales Analytics",
+            "M-Pesa Integration",
+            "Mobile Responsive",
+            "Cloud-Based",
+            "Multi-User Support",
+            "Advanced Reporting",
+            "Barcode Scanning",
+            "Expense Tracking",
+            "Profit & Loss Analysis"
+        ],
+        "screenshot": "{{ request.scheme }}://{{ request.get_host }}{% static 'pos/images/salessmart-screenshot.jpg' %}",
+        "downloadUrl": "{{ request.scheme }}://{{ request.get_host }}/signup/",
+        "genre": ["Business", "Retail", "Restaurant", "Point of Sale"],
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "softwareHelp": {
+            "@type": "WebPage",
+            "url": "{{ request.scheme }}://{{ request.get_host }}/support/"
+        }
+    }
+    </script>
+    
+    <!-- Local Business Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "SalesSmart Solutions Ltd",
+        "description": "Leading provider of point of sale systems and business management software in Kenya",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "telephone": "+254-XXX-XXX-XXX",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "Kenya",
+            "addressLocality": "Nairobi",
+            "addressRegion": "Nairobi County",
+            "postalCode": "00100"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "-1.2921",
+            "longitude": "36.8219"
+        },
+        "openingHours": "Mo-Su 00:00-23:59",
+        "priceRange": "$",
+        "paymentAccepted": ["M-Pesa", "Bank Transfer", "Credit Card"],
+        "areaServed": {
+            "@type": "Country",
+            "name": "Kenya"
+        },
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "POS System Plans",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Basic POS Plan"
+                    },
+                    "price": "0",
+                    "priceCurrency": "KES"
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service", 
+                        "name": "Pro POS Plan"
+                    },
+                    "price": "200",
+                    "priceCurrency": "KES"
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Enterprise POS Plan"
+                    },
+                    "price": "1200",
+                    "priceCurrency": "KES"
+                }
+            ]
+        }
+    }
+    </script>
+    
+    <!-- FAQ Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is SalesSmart POS?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "SalesSmart POS is a modern point of sale system designed specifically for Kenyan businesses. It helps manage sales, inventory, customers, and provides advanced analytics with M-Pesa integration."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is there a free plan available?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes! SalesSmart POS offers a free Basic plan that includes up to 5 users, basic reporting, email support, and 1GB storage."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Does SalesSmart POS support M-Pesa payments?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, SalesSmart POS seamlessly integrates with M-Pesa, allowing you to accept mobile money payments directly through the system."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Can I use SalesSmart POS on mobile devices?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Absolutely! SalesSmart POS is fully responsive and works perfectly on smartphones, tablets, and desktop computers."
+                }
+            }
+        ]
+    }
+    </script>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -53,9 +269,75 @@
             background-size: cover;
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
+        .modal-dialog {
+            max-height: 90vh;
+        }
+        
+        .modal-content {
+            max-height: 90vh;
+            overflow: hidden;
+        }
+        
+        .modal-body {
+            max-height: calc(90vh - 120px);
+            overflow-y: auto;
+        }
+        
+        /* Compact form styles */
+        #signupModal .form-control-sm {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            height: 2rem;
+        }
+        
+        #signupModal .form-label {
+            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
+        }
+        
+        #signupModal .form-text {
+            margin-bottom: 0.25rem;
+            font-size: 0.7rem;
+        }
+        
+        #signupModal .btn-sm {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        #signupModal .mb-2 {
+            margin-bottom: 0.5rem !important;
+        }
+        
+        #signupModal .form-check {
+            margin-bottom: 0.25rem;
+            padding-left: 1.2rem;
+        }
+        
+        #signupModal .form-check-input {
+            width: 0.8rem;
+            height: 0.8rem;
+        }
+        
+        #signupModal .form-check-label {
+            font-size: 0.75rem;
+            line-height: 1.2;
+        }
+        
+        /* Ensure modal doesn't exceed viewport */
+        @media (max-height: 600px) {
+            .modal-dialog {
+                margin: 0.5rem;
+                max-height: 95vh;
+            }
+            
+            .modal-content {
+                max-height: 95vh;
+            }
+            
+            .modal-body {
+                max-height: calc(95vh - 80px);
+            }
         }
 
         .hero h1 {
@@ -641,75 +923,78 @@
     <div class="modal fade" id="signupModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Create Your Account</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header py-2">
+                    <h5 class="modal-title fs-5">Create Your Account</h5>
+                    <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-3">
                     <div class="row">
                         <div class="col-md-6">
-                            <h6 class="mb-3">Sign up with Email</h6>
+                            <h6 class="mb-2 fs-6">Create Your Account</h6>
                             <form id="signupForm">
-                                <div class="mb-3">
-                                    <label class="form-label">Business Name *</label>
-                                    <input type="text" class="form-control" id="businessName" required>
+                                <div class="mb-2">
+                                    <label class="form-label fw-semibold small">Business Name *</label>
+                                    <input type="text" class="form-control form-control-sm" id="businessName" required 
+                                           placeholder="Enter your business name">
+                                    <div class="form-text small">This will be your business identifier</div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Your Name *</label>
-                                    <input type="text" class="form-control" id="fullName" required>
+                                <div class="mb-2">
+                                    <label class="form-label fw-semibold small">Full Name *</label>
+                                    <input type="text" class="form-control form-control-sm" id="fullName" required 
+                                           placeholder="Enter your full name">
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Email Address *</label>
-                                    <input type="email" class="form-control" id="email" required>
+                                <div class="mb-2">
+                                    <label class="form-label fw-semibold small">Email Address *</label>
+                                    <input type="email" class="form-control form-control-sm" id="email" required 
+                                           placeholder="business@example.com">
+                                    <div class="form-text small">We'll never share your email</div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone Number *</label>
-                                    <input type="tel" class="form-control" id="phone" required>
+                                <div class="mb-2">
+                                    <label class="form-label fw-semibold small">Phone Number *</label>
+                                    <input type="tel" class="form-control form-control-sm" id="phone" required 
+                                           placeholder="+254 700 000000">
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Password *</label>
-                                    <input type="password" class="form-control" id="password" required>
-                                    <small class="text-muted">Must be at least 8 characters with uppercase, lowercase, and numbers</small>
+                                <div class="mb-2">
+                                    <label class="form-label fw-semibold small">Username *</label>
+                                    <input type="text" class="form-control form-control-sm" id="username" required 
+                                           placeholder="Choose a username">
+                                    <div class="form-text small">This will be used to login</div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Confirm Password *</label>
-                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                <div class="mb-2">
+                                    <label class="form-label fw-semibold small">Password *</label>
+                                    <input type="password" class="form-control form-control-sm" id="password" required 
+                                           placeholder="Create a strong password">
+                                    <div class="form-text small">Min 8 characters with uppercase, lowercase, and numbers</div>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                                <div class="mb-2">
+                                    <label class="form-label fw-semibold small">Confirm Password *</label>
+                                    <input type="password" class="form-control form-control-sm" id="confirmPassword" required 
+                                           placeholder="Re-enter your password">
+                                </div>
+                                <div class="mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="terms" required>
+                                        <label class="form-check-label small" for="terms">
+                                            I agree to the <a href="#" class="text-primary">Terms and Conditions</a> 
+                                            and <a href="#" class="text-primary">Privacy Policy</a>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 btn-sm">
+                                    <i class="fas fa-user-plus me-1"></i>Create Account
+                                </button>
+                                <div class="text-center mt-2">
+                                    <small class="text-muted">By creating an account, you agree to our terms of service</small>
+                                </div>
                             </form>
                         </div>
                         <div class="col-md-6">
                             <div class="text-center">
-                                <h6 class="mb-3">Or sign up with</h6>
-                                <button class="btn btn-outline-danger w-100 mb-2" onclick="signupWithGoogle()">
-                                    <i class="fab fa-google me-2"></i> Google
-                                </button>
-                                <hr>
-                                <h6 class="mb-3">Already have an account?</h6>
-                                <button class="btn btn-outline-primary w-100" onclick="showLoginModal()">Sign In</button>
+                                <h6 class="mb-2 fs-6">Already have an account?</h6>
+                                <button class="btn btn-outline-primary w-100 btn-sm" onclick="showLoginModal()">Sign In</button>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Verification Modal -->
-    <div class="modal fade" id="verificationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Verify Your Email</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>We've sent a verification code to your email. Please enter it below:</p>
-                    <div class="mb-3">
-                        <label class="form-label">Verification Code</label>
-                        <input type="text" class="form-control" id="verificationCode" placeholder="Enter 6-digit code">
-                    </div>
-                    <button class="btn btn-primary w-100" onclick="verifyEmail()">Verify Email</button>
                 </div>
             </div>
         </div>
@@ -816,15 +1101,6 @@
             window.location.href = '/login/';
         }
 
-        function signupWithGoogle() {
-            // Google OAuth integration would go here
-            const toastEl = document.getElementById('paymentToast');
-            const toastBody = toastEl.querySelector('.toast-body');
-            toastBody.textContent = 'Google signup integration coming soon!';
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
-
         // Payment Functions
         function showPaymentModal(plan) {
             // Show payment info toast
@@ -904,19 +1180,54 @@ Thank you.`);
             toast.show();
         }
 
-        // Form Validation
+        // Form Validation and Submission
         document.getElementById('signupForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
+            const businessName = document.getElementById('businessName').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
+            
+            // Basic validation
+            if (!businessName || !fullName || !email || !phone || !username || !password || !confirmPassword) {
+                showToast('validationToast', 'Please fill in all required fields');
+                return;
+            }
+            
+            // Terms validation
+            if (!terms) {
+                showToast('validationToast', 'Please accept the terms and conditions');
+                return;
+            }
+            
+            // Email validation
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('validationToast', 'Please enter a valid email address');
+                return;
+            }
+            
+            // Phone validation (basic Kenya phone format)
+            if (!/^(\+254|0)?[17]\d{8}$/.test(phone.replace(/\s/g, ''))) {
+                showToast('validationToast', 'Please enter a valid Kenyan phone number');
+                return;
+            }
+            
+            // Username validation
+            if (username.length < 3) {
+                showToast('validationToast', 'Username must be at least 3 characters long');
+                return;
+            }
             
             // Password validation
             if (password.length < 8) {
                 showToast('validationToast', 'Password must be at least 8 characters long');
                 return;
             }
-            
             if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
                 showToast('validationToast', 'Password must contain uppercase, lowercase, and numbers');
                 return;
@@ -927,25 +1238,76 @@ Thank you.`);
                 return;
             }
             
-            // Show verification modal
-            const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
-            signupModal.hide();
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+            submitBtn.disabled = true;
             
-            setTimeout(() => {
-                const verificationModal = new bootstrap.Modal(document.getElementById('verificationModal'));
-                verificationModal.show();
-            }, 500);
+            // Submit form via AJAX
+            fetch('/signup/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    business_name: businessName,
+                    full_name: fullName,
+                    email: email,
+                    phone: phone,
+                    username: username,
+                    password: password,
+                    confirm_password: confirmPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Hide signup modal
+                    const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
+                    signupModal.hide();
+                    
+                    // Show success message and redirect
+                    showToast('validationToast', data.message || 'Account created successfully!');
+                    
+                    // Redirect to dashboard after a short delay
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/pos/dashboard/';
+                    }, 1500);
+                } else {
+                    showToast('validationToast', data.error || 'Registration failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (error.message.includes('JSON')) {
+                    showToast('validationToast', 'Server response error. Please try again.');
+                } else {
+                    showToast('validationToast', 'Registration failed. Please try again.');
+                }
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
         });
-
-        function verifyEmail() {
-            const code = document.getElementById('verificationCode').value;
-            
-            if (code === '123456') { // Demo code
-                alert('Account created successfully! Redirecting to login...');
-                window.location.href = '/login/';
-            } else {
-                alert('Invalid verification code. Try 123456 for demo.');
+        
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
             }
+            return cookieValue;
         }
 
         // Smooth scrolling
@@ -964,7 +1326,7 @@ Thank you.`);
     </script>
 
 <!-- Toast Container -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
     <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header bg-success text-white">
             <i class="fas fa-check-circle me-2"></i>

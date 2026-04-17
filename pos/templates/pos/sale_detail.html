@@ -40,7 +40,7 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <strong>Payment Method:</strong>
-                        <span class="badge bg-{{ sale.payment_method|lower|cut:' '-' '-' }}">{{ sale.payment_method }}</span>
+                        <span class="badge bg-{{ sale.payment_method|lower|cut:' ' }}">{{ sale.payment_method }}</span>
                     </div>
                     <div class="col-md-4">
                         <strong>Payment Status:</strong>
@@ -144,7 +144,7 @@
                             </tr>
                             <tr class="table-active">
                                 <th colspan="2" class="text-end">Total Quantity:</th>
-                                <th class="text-end">{{ sale.items.all|sum:'quantity' }}</th>
+                                <th class="text-end">{{ total_quantity }}</th>
                             </tr>
                         </tfoot>
                     </table>

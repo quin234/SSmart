@@ -35,9 +35,9 @@
                                 <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
                                 <h5>Profit & Loss</h5>
                                 <p class="text-muted">Track business profitability</p>
-                                <button class="btn btn-success" disabled>
-                                    <i class="fas fa-arrow-right"></i> Coming Soon
-                                </button>
+                                <a href="{% url 'pos:profit_loss' %}" class="btn btn-success">
+                                    <i class="fas fa-arrow-right"></i> View Report
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -47,9 +47,9 @@
                                 <i class="fas fa-box fa-3x text-info mb-3"></i>
                                 <h5>Inventory</h5>
                                 <p class="text-muted">Product performance analysis</p>
-                                <button class="btn btn-info" disabled>
-                                    <i class="fas fa-arrow-right"></i> Coming Soon
-                                </button>
+                                <a href="{% url 'pos:inventory_management' %}" class="btn btn-info">
+                                    <i class="fas fa-arrow-right"></i> Manage Inventory
+                                </a>
                             </div>
                         </div>
                     </div>

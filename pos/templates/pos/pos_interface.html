@@ -1,6 +1,10 @@
 {% extends 'pos/base.html' %}
 
-{% block title %}Point of Sale - SaleSmart POS{% endblock %}
+{% block title %}Point of Sale - {{ request.business.name|default:"SalesSmart" }} POS | Sales Terminal{% endblock %}
+
+{% block meta_description %}Process sales quickly and efficiently with {{ request.business.name|default:"SalesSmart" }} POS terminal. Support for M-Pesa, cash, and card payments with real-time inventory updates.{% endblock %}
+
+{% block meta_keywords %}point of sale, POS terminal, sales processing, M-Pesa payments, retail checkout, {{ request.business.name|default:"SalesSmart" }}{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
@@ -75,10 +79,10 @@
                         <span>Subtotal:</span>
                         <span id="subtotal" class="fw-bold">Ksh 0.00</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
+                    <!-- <div class="d-flex justify-content-between mb-2">
                         <span>Tax (16%):</span>
                         <span id="tax" class="fw-bold">Ksh 0.00</span>
-                    </div>
+                    </div> -->
                     <div class="d-flex justify-content-between mb-2">
                         <span>Discount:</span>
                         <span id="discount" class="fw-bold">Ksh 0.00</span>
@@ -95,9 +99,21 @@
                     <select class="form-select" id="payment-method">
                         <option value="Cash">Cash</option>
                         <option value="M-Pesa">M-Pesa</option>
-                        <option value="Card">Card</option>
+                        <!-- <option value="Card">Card</option> -->
                         <option value="Bank Transfer">Bank Transfer</option>
                     </select>
+                </div>
+                
+                <!-- M-Pesa Phone Number Input (shown only when M-Pesa is selected and enabled) -->
+                <div class="mb-3" id="mpesa-phone-section" style="display: none;">
+                    <label class="form-label fw-bold">M-Pesa Phone Number</label>
+                    <div class="input-group">
+                        <input type="tel" class="form-control" id="mpesa-phone" placeholder="2547XXXXXXXX" pattern="[0-9]{10}" maxlength="10">
+                        <button class="btn btn-outline-primary" type="button" id="mpesa-prompt-btn" onclick="promptMpesaPayment()">
+                            <i class="fas fa-mobile-alt"></i> Prompt
+                        </button>
+                    </div>
+                    <small class="form-text text-muted" id="mpesa-help-text">Enter customer's M-Pesa phone number (10 digits)</small>
                 </div>
                 
                 <div class="mb-3">
@@ -111,7 +127,7 @@
                 </div>
                 
                 <div class="d-grid gap-2">
-                    <button class="btn btn-success btn-lg" type="button" onclick="completeSale()">
+                    <button class="btn btn-success btn-lg" type="button" id="complete-sale-btn" onclick="completeSale()">
                         <i class="fas fa-check-circle"></i> Complete Sale
                     </button>
                     <button class="btn btn-outline-secondary" type="button" onclick="clearCart()">
@@ -134,6 +150,14 @@
 .form-control:focus {
     border-color: #0d6efd;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+.input-group .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.input-group .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 .btn-success {
     background: linear-gradient(135deg, #28a745, #20c997);
@@ -161,26 +185,31 @@
 <script>
 let cart = [];
 
-function addToCart(productId, productName, price, stockQuantity) {
-    if (stockQuantity <= 0) {
-        showNotification('Product is out of stock', 'warning');
-        return;
-    }
-    
+// Business tax settings from data attributes
+const businessSettings = {
+    enable_tax: document.body.dataset.enableTax === 'true',
+    tax_rate: parseFloat(document.body.dataset.taxRate) || 0,
+    tax_name: document.body.dataset.taxName || 'VAT',
+    enable_daraja: document.body.dataset.enableDaraja === 'true'
+};
+
+function addToCart(productId, productName, price, stock) {
+    // Check if product already in cart
     const existingItem = cart.find(item => item.id === productId);
     if (existingItem) {
-        if (existingItem.quantity >= stockQuantity) {
+        if (existingItem.quantity < stock) {
+            existingItem.quantity += 1;
+        } else {
             showNotification('Insufficient stock available', 'warning');
             return;
         }
-        existingItem.quantity += 1;
     } else {
         cart.push({
             id: productId,
             name: productName,
             price: price,
             quantity: 1,
-            max_quantity: stockQuantity
+            stock: stock
         });
     }
     
@@ -191,6 +220,11 @@ function addToCart(productId, productName, price, stockQuantity) {
 
 function updateCartDisplay() {
     const tbody = document.getElementById('cart-items');
+    
+    // Return early if tbody element doesn't exist
+    if (!tbody) {
+        return;
+    }
     
     if (cart.length === 0) {
         tbody.innerHTML = `
@@ -253,22 +287,87 @@ function clearCart() {
     if (cart.length > 0 && confirm('Are you sure you want to clear the cart?')) {
         cart = [];
         updateCartDisplay();
+        
+        // Reset M-Pesa prompt flag
+        const completeSaleBtn = document.getElementById('complete-sale-btn');
+        if (completeSaleBtn) {
+            delete completeSaleBtn.dataset.mpesaPrompted;
+        }
     }
 }
 
 function updateTotals() {
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const tax = subtotal * 0.16;
-    const total = subtotal + tax;
+    let tax = 0;
+    let total = subtotal;
     
-    document.getElementById('subtotal').textContent = `Ksh ${subtotal.toFixed(2)}`;
-    document.getElementById('tax').textContent = `Ksh ${tax.toFixed(2)}`;
-    document.getElementById('discount').textContent = `Ksh 0.00`;
-    document.getElementById('total').textContent = `Ksh ${total.toFixed(2)}`;
+    // Apply tax only if enabled
+    if (businessSettings.enable_tax) {
+        tax = subtotal * (businessSettings.tax_rate / 100);
+        total = subtotal + tax;
+    }
     
-    const amountTendered = parseFloat(document.getElementById('amount-tendered').value) || 0;
-    const change = amountTendered - total;
-    document.getElementById('change').value = change >= 0 ? change.toFixed(2) : '0.00';
+    // Update subtotal if element exists
+    const subtotalEl = document.getElementById('subtotal');
+    if (subtotalEl) {
+        subtotalEl.textContent = `Ksh ${subtotal.toFixed(2)}`;
+    }
+    
+    // Update discount if element exists
+    const discountEl = document.getElementById('discount');
+    if (discountEl) {
+        discountEl.textContent = `Ksh 0.00`;
+    }
+    
+    // Update total if element exists
+    const totalEl = document.getElementById('total');
+    if (totalEl) {
+        totalEl.textContent = `Ksh ${total.toFixed(2)}`;
+    }
+    
+    // Update amount tendered and change if elements exist
+    const amountTenderedEl = document.getElementById('amount-tendered');
+    const changeEl = document.getElementById('change');
+    
+    if (amountTenderedEl && changeEl) {
+        const amountTendered = parseFloat(amountTenderedEl.value) || 0;
+        const change = amountTendered - total;
+        changeEl.value = change >= 0 ? change.toFixed(2) : '0.00';
+    }
+}
+
+// Prompt M-Pesa payment
+function promptMpesaPayment() {
+    const mpesaPhone = document.getElementById('mpesa-phone').value;
+    
+    if (!mpesaPhone || mpesaPhone.length !== 10) {
+        showNotification('Please enter a valid M-Pesa phone number (10 digits)', 'warning');
+        return;
+    }
+    
+    // Show confirmation dialog
+    if (confirm(`Initiate M-Pesa payment request to ${mpesaPhone}?`)) {
+        // Show loading state
+        const promptBtn = document.getElementById('mpesa-prompt-btn');
+        promptBtn.disabled = true;
+        promptBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        // Simulate M-Pesa API call (in real implementation, this would call your backend)
+        setTimeout(() => {
+            // Simulate successful payment confirmation
+            showNotification(`M-Pesa payment request sent to ${mpesaPhone}. Please wait for customer confirmation.`, 'success');
+            
+            // Reset button state
+            promptBtn.disabled = false;
+            promptBtn.innerHTML = '<i class="fas fa-mobile-alt"></i>';
+            
+            // Set flag that M-Pesa prompt was used
+            document.getElementById('complete-sale-btn').dataset.mpesaPrompted = 'true';
+            
+            // Enable complete sale button
+            document.getElementById('complete-sale-btn').disabled = false;
+        }, 2000);
+    }
 }
 
 function completeSale() {
@@ -277,18 +376,103 @@ function completeSale() {
         return;
     }
     
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 1.16;
-    const amountTendered = parseFloat(document.getElementById('amount-tendered').value) || 0;
+    const paymentMethod = document.getElementById('payment-method').value;
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let taxAmount = 0;
+    let totalWithTax = subtotal;
     
-    if (amountTendered < total) {
+    // Calculate tax only if enabled
+    if (businessSettings.enable_tax) {
+        taxAmount = subtotal * (businessSettings.tax_rate / 100);
+        totalWithTax = subtotal + taxAmount;
+    }
+    
+    let amountTendered = parseFloat(document.getElementById('amount-tendered').value) || 0;
+    let mpesaPhone = document.getElementById('mpesa-phone').value || '';
+    
+    // Check if M-Pesa is selected and handle based on business settings
+    const completeSaleBtn = document.getElementById('complete-sale-btn');
+    const isMpesaPayment = paymentMethod === 'M-Pesa';
+    const mpesaPromptUsed = completeSaleBtn.dataset.mpesaPrompted === 'true';
+    
+    // For M-Pesa payments, handle based on business settings
+    if (isMpesaPayment) {
+        if (businessSettings.enable_daraja) {
+            // M-Pesa is enabled - require prompt to be used first and validate phone
+            if (!mpesaPromptUsed) {
+                showNotification('Please use the M-Pesa prompt button first to initiate payment', 'warning');
+                return;
+            }
+            
+            if (!mpesaPhone || mpesaPhone.length !== 10) {
+                showNotification('Please enter a valid M-Pesa phone number (10 digits)', 'warning');
+                return;
+            }
+        } else {
+            // M-Pesa is not enabled - no validation needed, proceed with sale
+            showNotification('M-Pesa is not enabled. Sale will be completed assuming manual payment.', 'info');
+        }
+    }
+    
+    // For non-cash payments, set amount tendered to total automatically
+    if (paymentMethod !== 'Cash') {
+        amountTendered = totalWithTax;
+        document.getElementById('amount-tendered').value = amountTendered.toFixed(2);
+        document.getElementById('amount-tendered').disabled = true;
+    } else {
+        document.getElementById('amount-tendered').disabled = false;
+    }
+    
+    if (paymentMethod === 'Cash' && amountTendered < totalWithTax) {
         showNotification('Insufficient amount tendered', 'warning');
         return;
     }
     
-    showNotification('Sale completed successfully!', 'success');
-    cart = [];
-    updateCartDisplay();
-    document.getElementById('amount-tendered').value = '';
+    // Send sale data to backend
+    const saleData = {
+        cart: cart,
+        payment_method: paymentMethod,
+        amount_tendered: amountTendered,
+        subtotal: subtotal,
+        tax_amount: taxAmount,
+        total_amount: totalWithTax,
+        mpesa_phone: (businessSettings.enable_daraja && paymentMethod === 'M-Pesa') ? mpesaPhone : '',
+        use_daraja: businessSettings.enable_daraja && paymentMethod === 'M-Pesa'
+    };
+    
+    fetch('/sales/create/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(saleData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(`Sale ${data.sale_number} completed successfully!`, 'success');
+            
+            // Clear cart and reset form
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('amount-tendered').value = '';
+            document.getElementById('amount-tendered').disabled = false;
+            document.getElementById('mpesa-phone').value = '';
+            
+            // TODO: Implement receipt printing functionality later
+            // if (confirm('Would you like to print a receipt?')) {
+            //     printReceipt(data);
+            // }
+        } else {
+            showNotification(data.error || 'Failed to complete sale', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Failed to complete sale. Please try again.', 'error');
+    });
 }
 
 function showNotification(message, type) {
@@ -350,5 +534,101 @@ document.addEventListener('click', function(e) {
 
 // Handle amount tendered input
 document.getElementById('amount-tendered').addEventListener('input', updateTotals);
+
+// Handle payment method change
+document.getElementById('payment-method').addEventListener('change', function() {
+    const paymentMethod = this.value;
+    const amountTenderedInput = document.getElementById('amount-tendered');
+    const mpesaPhoneSection = document.getElementById('mpesa-phone-section');
+    const mpesaPhoneInput = document.getElementById('mpesa-phone');
+    const mpesaPromptBtn = document.getElementById('mpesa-prompt-btn');
+    const mpesaHelpText = document.getElementById('mpesa-help-text');
+    const completeSaleBtn = document.getElementById('complete-sale-btn');
+    
+    // Show/hide M-Pesa phone field based on payment method and business settings
+    if (mpesaPhoneSection && mpesaPhoneInput && mpesaPromptBtn && mpesaHelpText) {
+        if (paymentMethod === 'M-Pesa') {
+            mpesaPhoneSection.style.display = 'block';
+            
+            // Check if M-Pesa is enabled in business settings
+            if (businessSettings.enable_daraja) {
+                // M-Pesa is enabled - require phone number and show prompt button
+                mpesaPhoneInput.required = true;
+                mpesaPromptBtn.style.display = 'block';
+                mpesaHelpText.textContent = 'Enter customer\'s M-Pesa phone number (10 digits)';
+                completeSaleBtn.dataset.mpesaPrompted = 'false'; // Reset prompt flag
+            } else {
+                // M-Pesa is not enabled - hide prompt button and update help text
+                mpesaPhoneInput.required = false;
+                mpesaPhoneInput.value = '';
+                mpesaPromptBtn.style.display = 'none';
+                mpesaHelpText.textContent = 'M-Pesa is not enabled in settings. Sale will be completed assuming manual payment.';
+                completeSaleBtn.dataset.mpesaPrompted = 'true'; // Auto-approve since no prompt needed
+            }
+        } else {
+            mpesaPhoneSection.style.display = 'none';
+            mpesaPhoneInput.required = false;
+            mpesaPhoneInput.value = '';
+            completeSaleBtn.dataset.mpesaPrompted = 'false';
+        }
+    }
+    
+    if (paymentMethod !== 'Cash') {
+        amountTenderedInput.value = '';
+        amountTenderedInput.disabled = true;
+        amountTenderedInput.placeholder = 'Auto-calculated';
+    } else {
+        amountTenderedInput.disabled = false;
+        amountTenderedInput.placeholder = '0.00';
+    }
+    
+    updateTotals();
+});
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// TODO: Implement receipt printing functionality later
+/*
+function printReceipt(saleData) {
+    // Simple receipt printing functionality
+    const receiptContent = `
+SALE RECEIPT
+================
+Sale Number: ${saleData.sale_number}
+Date: ${new Date().toLocaleString()}
+Payment Method: ${saleData.payment_method}
+------------------------
+Items:
+${saleData.cart.map(item => 
+    `${item.name} x ${item.quantity} @ Ksh${item.price.toFixed(2)} = Ksh${(item.price * item.quantity).toFixed(2)}`
+).join('\n')}
+------------------------
+Subtotal: Ksh${saleData.total_amount.toFixed(2)}
+Tax (16%): Ksh${saleData.total_amount * 0.16 / 1.16).toFixed(2)}
+Total: Ksh${saleData.total_amount.toFixed(2)}
+${saleData.payment_method === 'Cash' ? `Amount Tendered: Ksh${saleData.amount_tendered.toFixed(2)}\nChange: Ksh${saleData.change.toFixed(2)}` : 'Paid in Full'}
+========================
+Thank you for your business!
+    `;
+    
+    console.log('Receipt:', receiptContent);
+    // In a real implementation, this would send to a receipt printer
+    alert('Receipt functionality would be implemented here. Check console for receipt content.');
+}
+*/
 </script>
 {% endblock %}

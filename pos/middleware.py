@@ -34,15 +34,20 @@ class BusinessMiddleware:
             except Business.DoesNotExist:
                 pass
         
-        # For authenticated users without business, assign them to a default business
+        # For authenticated users, set business from their profile if no business context
         if request.user.is_authenticated and not request.business and not request.user.is_superuser:
-            # Try to get the first business or create a default one
-            try:
-                business = Business.objects.first()
-                if business:
-                    request.business = business
-            except:
-                pass
+            if request.user.business:
+                request.business = request.user.business
+        
+        # Special handling for login redirect - ensure business context is preserved
+        if request.user.is_authenticated and request.path == '/pos/' and not request.business:
+            # User is accessing dashboard but no business context - try to set from user
+            if request.user.business:
+                request.business = request.user.business
+            elif not request.user.is_superuser:
+                # If user has no business and is not superuser, redirect to admin
+                from django.shortcuts import redirect
+                return redirect('/admin/')
         
         response = self.get_response(request)
         return response

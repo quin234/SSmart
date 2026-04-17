@@ -70,12 +70,18 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-outline-primary">
+                                    {% if user != request.user %}
+                                    <a href="{% url 'pos:user_edit' user.id %}" class="btn btn-sm btn-outline-primary" title="Edit User">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-outline-danger">
+                                    {% if not user.is_superuser and not user.is_business_admin %}
+                                    <a href="{% url 'pos:user_delete' user.id %}" class="btn btn-sm btn-outline-danger" title="Delete User">
                                         <i class="fas fa-trash"></i>
                                     </a>
+                                    {% endif %}
+                                    {% else %}
+                                    <span class="text-muted small">Current User</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% empty %}

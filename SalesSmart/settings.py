@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-15kn$)bjuz^opdo89r&q4smjcr^#%6)l%=ha&=q+ykzq-jjuz6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','192.168.0.101', 'smartcampus.co.ke', 'www.smartcampus.co.ke']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','192.168.0.101', 'smartcampus.co.ke', 'www.smartcampus.co.ke', 'testserver']
 
 
 # Application definition
@@ -49,9 +49,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'pos.middleware_sitemap.SitemapMiddleware',
     'pos.middleware.BusinessMiddleware',
     'pos.middleware.UserRoleMiddleware',
 ]
+
+# Security settings
+SECURE_BROWSER_XSS_FILTER = False
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+X_FRAME_OPTIONS = 'DENY'
 
 ROOT_URLCONF = 'SalesSmart.urls'
 
@@ -82,21 +91,18 @@ WSGI_APPLICATION = 'SalesSmart.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'SalesSmart',
+        'USER': 'root',
+        'PASSWORD': 'SalesSmartp@ssW0rd',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'auth_plugin': 'mysql_native_password',
+        },
     }
-    # MySQL configuration (commented out for development)
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'Pos_Database',
-    #     'USER': 'root',
-    #     'PASSWORD': '',
-    #     'HOST': 'localhost',
-    #     'PORT': '3306',
-    #     'OPTIONS': {
-    #         'charset': 'utf8mb4',
-    #     },
-    # }
 }
 
 
@@ -134,7 +140,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/staticfiles/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'pos' / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

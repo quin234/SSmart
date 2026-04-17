@@ -1,8 +1,30 @@
 {% extends 'pos/base.html' %}
 
-{% block title %}Dashboard - SalesSmart POS{% endblock %}
+{% block title %}Dashboard - {{ request.business.name|default:"SalesSmart" }} POS | Business Analytics{% endblock %}
+
+{% block meta_description %}Access your business dashboard with real-time sales analytics, inventory insights, and performance metrics for {{ request.business.name|default:"your business" }}.{% endblock %}
+
+{% block meta_keywords %}business dashboard, POS analytics, sales dashboard, inventory insights, business metrics, {{ request.business.name|default:"SalesSmart" }}{% endblock %}
 
 {% block content %}
+<!-- Chart data as JavaScript variables -->
+<script>
+window.chartData = {
+    dailySales: {
+        labels: [{% for item in daily_sales_data %}'{{ item.date|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+        data: [{% for item in daily_sales_data %}{{ item.amount }}{% if not forloop.last %},{% endif %}{% endfor %}]
+    },
+    monthlySales: {
+        labels: [{% for item in monthly_sales_data %}'{{ item.month|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+        data: [{% for item in monthly_sales_data %}{{ item.amount }}{% if not forloop.last %},{% endif %}{% endfor %}]
+    },
+    topProducts: {
+        labels: [{% for item in top_products_data %}'{{ item.name|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+        data: [{% for item in top_products_data %}{{ item.sold }}{% if not forloop.last %},{% endif %}{% endfor %}]
+    }
+};
+</script>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">
         <i class="fas fa-tachometer-alt text-primary"></i> Dashboard
@@ -241,62 +263,7 @@
     box-shadow: 0 6px 12px rgba(13, 202, 240, 0.4);
 }
 
-/* Dark mode styles */
-[data-theme="dark"] .card {
-    background-color: #1a1a1a;
-    border-color: #343a40;
-    color: #ffffff;
-}
-
-[data-theme="dark"] .card-header {
-    background: linear-gradient(135deg, #343a40, #495057);
-    border-bottom-color: #495057;
-}
-
-[data-theme="dark"] .card-body {
-    background-color: #1a1a1a;
-    color: #ffffff;
-}
-
-[data-theme="dark"] .text-muted {
-    color: #adb5bd !important;
-}
-
-[data-theme="dark"] .bg-primary.bg-opacity-10 {
-    background-color: rgba(13, 110, 253, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-success.bg-opacity-10 {
-    background-color: rgba(25, 135, 84, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-info.bg-opacity-10 {
-    background-color: rgba(13, 202, 240, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-warning.bg-opacity-10 {
-    background-color: rgba(255, 193, 7, 0.2) !important;
-}
-
-[data-theme="dark"] .btn-primary {
-    background: linear-gradient(135deg, #0d6efd, #0056b3) !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .btn-success {
-    background: linear-gradient(135deg, #198754, #146c43) !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] .btn-warning {
-    background: linear-gradient(135deg, #ffc107, #e0a800) !important;
-    color: #000000 !important;
-}
-
-[data-theme="dark"] .btn-info {
-    background: linear-gradient(135deg, #0dcaf0, #0aa2c0) !important;
-    color: #ffffff !important;
-}
+// Chart initialization
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
@@ -344,15 +311,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Get chart data from window variable
+const chartData = window.chartData || {
+    dailySales: { labels: [], data: [] },
+    monthlySales: { labels: [], data: [] },
+    topProducts: { labels: [], data: [] }
+};
+
 // Daily Sales Chart
 const dailySalesCtx = document.getElementById('dailySalesChart').getContext('2d');
 const dailySalesChart = new Chart(dailySalesCtx, {
     type: 'bar',
     data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        labels: chartData.dailySales.labels,
         datasets: [{
             label: 'Daily Sales (Ksh)',
-            data: [12000, 19000, 15000, 25000, 22000, 30000, 28000],
+            data: chartData.dailySales.data,
             backgroundColor: 'rgba(13, 110, 253, 0.6)',
             borderColor: 'rgba(13, 110, 253, 1)',
             borderWidth: 1
@@ -384,10 +358,10 @@ const monthlySalesCtx = document.getElementById('monthlySalesChart').getContext(
 const monthlySalesChart = new Chart(monthlySalesCtx, {
     type: 'bar',
     data: {
-        labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+        labels: chartData.monthlySales.labels,
         datasets: [{
             label: 'Monthly Sales (Ksh)',
-            data: [450000, 520000, 480000, 610000, 750000, 680000],
+            data: chartData.monthlySales.data,
             backgroundColor: 'rgba(25, 135, 84, 0.6)',
             borderColor: 'rgba(25, 135, 84, 1)',
             borderWidth: 1
@@ -419,10 +393,10 @@ const topProductsCtx = document.getElementById('topProductsChart').getContext('2
 const topProductsChart = new Chart(topProductsCtx, {
     type: 'bar',
     data: {
-        labels: ['Laptop', 'Phone', 'Tablet', 'Headphones', 'Mouse', 'Keyboard', 'Monitor', 'Speaker', 'Camera', 'Router'],
+        labels: chartData.topProducts.labels,
         datasets: [{
             label: 'Units Sold',
-            data: [45, 62, 38, 71, 89, 56, 42, 67, 31, 58],
+            data: chartData.topProducts.data,
             backgroundColor: 'rgba(255, 193, 7, 0.6)',
             borderColor: 'rgba(255, 193, 7, 1)',
             borderWidth: 1
@@ -444,38 +418,9 @@ const topProductsChart = new Chart(topProductsCtx, {
     }
 });
 
-// Dark mode chart updates
-function updateChartTheme() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const textColor = isDark ? '#ffffff' : '#333333';
-    const gridColor = isDark ? '#495057' : '#e9ecef';
-    
-    [dailySalesChart, monthlySalesChart, topProductsChart].forEach(chart => {
-        chart.options.scales.x.ticks.color = textColor;
-        chart.options.scales.y.ticks.color = textColor;
-        chart.options.scales.x.grid.color = gridColor;
-        chart.options.scales.y.grid.color = gridColor;
-        chart.update();
-    });
-}
-
-// Initialize chart theme
+// Initialize charts
 document.addEventListener('DOMContentLoaded', function() {
-    updateChartTheme();
-});
-
-// Update charts when theme changes
-const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
-            updateChartTheme();
-        }
-    });
-});
-
-observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme']
+    // Charts will be initialized here
 });
 </script>
 {% endblock %}

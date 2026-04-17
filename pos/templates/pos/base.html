@@ -1,18 +1,330 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SalesSmart POS{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}{% if request.business %}{{ request.business.name }}{% else %}SalesSmart{% endif %} POS - Modern Point of Sale System for Kenyan Businesses{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}SalesSmart POS is a modern point of sale system designed for Kenyan businesses. Manage sales, inventory, customers, and analytics with ease. Cloud-based, mobile-friendly, and secure.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}point of sale, POS system, Kenya, business management, inventory management, sales tracking, customer management, analytics, cloud POS, mobile POS, retail POS, restaurant POS{% endblock %}">
+    <meta name="author" content="SalesSmart Solutions Ltd">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="geo.region" content="KE">
+    <meta name="geo.placename" content="Kenya">
+    <meta name="geo.position" content="-1.2921;36.8219">
+    <meta name="ICBM" content="-1.2921, 36.8219">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{% block og_title %}SalesSmart POS - Modern Point of Sale System for Kenyan Businesses{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Transform your business with SalesSmart POS. Complete sales, inventory, and customer management system designed for Kenyan businesses.{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'pos/images/salessmart-og-image.jpg' %}{% endblock %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="SalesSmart POS">
+    <meta property="og:locale" content="en_KE">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@SalesSmartKE">
+    <meta name="twitter:creator" content="@SalesSmartKE">
+    <meta name="twitter:title" content="{% block twitter_title %}SalesSmart POS - Modern Point of Sale System for Kenyan Businesses{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Transform your business with SalesSmart POS. Complete sales, inventory, and customer management system designed for Kenyan businesses.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'pos/images/salessmart-twitter-card.jpg' %}{% endblock %}">
+    
+    <!-- Structured Data (JSON-LD) -->
+    {% block structured_data %}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "SalesSmart POS",
+        "description": "Modern point of sale system designed for Kenyan businesses",
+        "url": "{{ request.scheme }}://{{ request.get_host }}",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "KES",
+            "description": "Free POS system for Kenyan businesses"
+        },
+        "provider": {
+            "@type": "Organization",
+            "name": "SalesSmart Solutions Ltd",
+            "url": "{{ request.scheme }}://{{ request.get_host }}",
+            "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "Kenya",
+                "addressLocality": "Nairobi"
+            },
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "availableLanguage": "English"
+            }
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "150"
+        }
+    }
+    </script>
+    {% endblock %}
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'pos/images/iconSales.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'pos/images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'pos/images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'pos/images/favicon-16x16.png' %}">
+    
+    <!-- Critical CSS for immediate rendering -->
+<style>
+/* Critical CSS for login page rendering */
+:root {
+    --bs-primary: #0d6efd;
+    --bs-secondary: #6c757d;
+    --bs-success: #198754;
+    --bs-danger: #dc3545;
+    --bs-warning: #ffc107;
+    --bs-info: #0dcaf0;
+    --bs-light: #f8f9fa;
+    --bs-dark: #212529;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+}
+
+.container, .container-fluid {
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+}
+
+.col, .col-md-6, .col-lg-5 {
+    position: relative;
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+}
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 1rem 1rem;
+}
+
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    border-radius: 0.3rem;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ced4da;
+    appearance: none;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-label {
+    margin-bottom: 0.5rem;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mt-5 {
+    margin-top: 3rem !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+.border-0 {
+    border: 0 !important;
+}
+
+.d-grid {
+    display: grid !important;
+}
+
+.gap-2 {
+    gap: 0.5rem !important;
+}
+
+.fw-bold {
+    font-weight: 700 !important;
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.small {
+    font-size: 0.875em;
+}
+
+.alert {
+    position: relative;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}
+
+@media (min-width: 768px) {
+    .col-md-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+}
+
+@media (min-width: 992px) {
+    .col-lg-5 {
+        flex: 0 0 auto;
+        width: 41.6666666667%;
+    }
+}
+
+/* Login specific styles */
+.login-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .login-logo {
+        width: 60px;
+        height: 60px;
+    }
+}
+</style>
+    
+    <!-- Full CSS loaded asynchronously -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"></noscript>
 </head>
-<body>
+<body data-enable-tax="{{ enable_tax|yesno:'true,false' }}" data-tax-rate="{{ tax_rate }}" data-tax-name="{{ tax_name }}" data-enable-daraja="{{ enable_daraja|yesno:'true,false' }}">
     {% if user.is_authenticated and request.business %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'pos:dashboard' %}">
-                <i class="fas fa-cash-register"></i> SalesSmart
+                <img src="{% static 'pos/images/iconSales.ico' %}" alt="Logo" class="navbar-logo me-2">
+                {% if request.business %}{{ request.business.name }}{% else %}SalesSmart{% endif %}
             </a>
             
             <!-- Desktop Navigation -->
@@ -45,6 +357,8 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'pos:sale_list' %}">Sales History</a></li>
                             <li><a class="dropdown-item" href="{% url 'pos:reports' %}">Reports</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:profit_loss' %}">Profit & Loss</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:inventory_management' %}">Inventory Management</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -63,18 +377,18 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'pos:business_profile' %}">Business Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:business_settings' %}">Settings</a></li>
                             <li><a class="dropdown-item" href="{% url 'pos:user_list' %}">Users</a></li>
+                            {% if user.is_business_admin or user.is_superuser %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'pos:database_management' %}"><i class="fas fa-database me-2"></i>Database Management</a></li>
+                            {% endif %}
                         </ul>
                     </li>
                     {% endif %}
                 </ul>
                 
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <button class="btn btn-outline-light btn-sm" id="darkModeToggle" onclick="toggleDarkMode()">
-                            <i class="fas fa-moon" id="darkModeIcon"></i>
-                        </button>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user"></i> {{ user.get_full_name|default:user.username }}
@@ -107,7 +421,7 @@
         <div class="mobile-sidebar-header">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="text-white mb-0">
-                    <i class="fas fa-cash-register"></i> SalesSmart
+                    <i class="fas fa-cash-register"></i> {% if request.business %}{{ request.business.name }}{% else %}SalesSmart{% endif %}
                 </h5>
                 <button class="btn btn-outline-light btn-sm" id="closeSidebar">
                     <i class="fas fa-times"></i>
@@ -130,50 +444,55 @@
                 </li>
                 <li class="mobile-nav-divider"></li>
                 <li class="mobile-nav-item">
-                    <div class="mobile-nav-section">
+                    <div class="mobile-nav-section" onclick="toggleMobileSection('products')">
                         <i class="fas fa-box"></i> Products
+                        <i class="fas fa-chevron-down mobile-section-toggle" id="products-toggle"></i>
                     </div>
-                    <ul class="mobile-sub-nav">
+                    <ul class="mobile-sub-nav" id="products-section">
                         <li><a href="{% url 'pos:product_list' %}" class="mobile-sub-nav-link">All Products</a></li>
                         <li><a href="{% url 'pos:product_create' %}" class="mobile-sub-nav-link">Add Product</a></li>
                         <li><a href="{% url 'pos:category_list' %}" class="mobile-sub-nav-link">Categories</a></li>
                     </ul>
                 </li>
                 <li class="mobile-nav-item">
-                    <div class="mobile-nav-section">
+                    <div class="mobile-nav-section" onclick="toggleMobileSection('sales')">
                         <i class="fas fa-chart-line"></i> Sales
+                        <i class="fas fa-chevron-down mobile-section-toggle" id="sales-toggle"></i>
                     </div>
-                    <ul class="mobile-sub-nav">
+                    <ul class="mobile-sub-nav" id="sales-section">
                         <li><a href="{% url 'pos:sale_list' %}" class="mobile-sub-nav-link">Sales History</a></li>
                         <li><a href="{% url 'pos:reports' %}" class="mobile-sub-nav-link">Reports</a></li>
+                        <li><a href="{% url 'pos:profit_loss' %}" class="mobile-sub-nav-link">Profit & Loss</a></li>
+                        <li><a href="{% url 'pos:inventory_management' %}" class="mobile-sub-nav-link">Inventory Management</a></li>
                     </ul>
                 </li>
                 <li class="mobile-nav-item">
-                    <div class="mobile-nav-section">
+                    <div class="mobile-nav-section" onclick="toggleMobileSection('expenses')">
                         <i class="fas fa-receipt"></i> Expenses
+                        <i class="fas fa-chevron-down mobile-section-toggle" id="expenses-toggle"></i>
                     </div>
-                    <ul class="mobile-sub-nav">
+                    <ul class="mobile-sub-nav" id="expenses-section">
                         <li><a href="{% url 'pos:expense_list' %}" class="mobile-sub-nav-link">All Expenses</a></li>
                         <li><a href="{% url 'pos:expense_create' %}" class="mobile-sub-nav-link">Add Expense</a></li>
                     </ul>
                 </li>
                 {% if user.is_business_admin %}
                 <li class="mobile-nav-item">
-                    <div class="mobile-nav-section">
+                    <div class="mobile-nav-section" onclick="toggleMobileSection('management')">
                         <i class="fas fa-cogs"></i> Management
+                        <i class="fas fa-chevron-down mobile-section-toggle" id="management-toggle"></i>
                     </div>
-                    <ul class="mobile-sub-nav">
+                    <ul class="mobile-sub-nav" id="management-section">
                         <li><a href="{% url 'pos:business_profile' %}" class="mobile-sub-nav-link">Business Profile</a></li>
+                        <li><a href="{% url 'pos:business_settings' %}" class="mobile-sub-nav-link">Settings</a></li>
                         <li><a href="{% url 'pos:user_list' %}" class="mobile-sub-nav-link">Users</a></li>
+                        {% if user.is_business_admin or user.is_superuser %}
+                        <li><a href="{% url 'pos:database_management' %}" class="mobile-sub-nav-link"><i class="fas fa-database me-2"></i>Database Management</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 {% endif %}
                 <li class="mobile-nav-divider"></li>
-                <li class="mobile-nav-item">
-                    <button class="mobile-nav-link" onclick="toggleDarkMode()">
-                        <i class="fas fa-moon" id="mobileDarkModeIcon"></i> Dark Mode
-                    </button>
-                </li>
                 <li class="mobile-nav-item">
                     <a href="#" class="mobile-nav-link">
                         <i class="fas fa-user-circle"></i> Profile
@@ -194,22 +513,18 @@
     <!-- Mobile Overlay -->
     <div class="mobile-overlay" id="mobileOverlay"></div>
     
+    <!-- Global Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <!-- Toast messages will be inserted here -->
+    </div>
+    
     <div class="container-fluid mt-3">
         <div class="row">
             <div class="col-12">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+                {% block content %}
+                {% endblock %}
             </div>
         </div>
-        
-        {% block content %}
-        {% endblock %}
     </div>
     {% else %}
         <div class="container">
@@ -242,26 +557,6 @@
             --text-dark: #212529;
         }
         
-        [data-theme="dark"] {
-    --bg-primary: #0d6efd;
-    --bg-secondary: #343a40;
-    --bg-success: #198754;
-    --bg-info: #0dcaf0;
-    --bg-warning: #ffc107;
-    --bg-danger: #dc3545;
-    --bg-light: #1a1a1a;
-    --bg-dark: #000000;
-    
-    --text-primary: #ffffff;
-    --text-secondary: #adb5bd;
-    --text-success: #28a745;
-    --text-info: #17a2b8;
-    --text-warning: #ffc107;
-    --text-danger: #dc3545;
-    --text-light: #ffffff;
-    --text-dark: #ffffff;
-}
-        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-light);
@@ -275,6 +570,12 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
+        .navbar-logo {
+            width: 50%;
+            height: 50px;
+            object-fit: contain;
+        }
+        
         .card {
             border: 1px solid #dee2e6;
             border-radius: 12px;
@@ -283,76 +584,102 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
-        [data-theme="dark"] .card {
-            border-color: #495057;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+        .form-control {
+            background-color: #ffffff;
+            border: 1px solid #ced4da;
+            color: #212529;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         
-        [data-theme="dark"] .navbar {
-            background: linear-gradient(135deg, var(--bg-primary), #0056b3);
-        }
-        
-        [data-theme="dark"] body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-        }
-        
-        [data-theme="dark"] .form-control {
-            background-color: var(--bg-dark);
-            border-color: #495057;
-            color: var(--text-light);
-        }
-        
-        [data-theme="dark"] .form-control:focus {
-            background-color: var(--bg-dark);
+        .form-control:focus {
+            background-color: #ffffff;
             border-color: var(--bg-primary);
-            color: var(--text-light);
+            color: #212529;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            outline: none;
         }
         
-        [data-theme="dark"] .table {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+        .table {
+            background-color: #ffffff;
+            color: #212529;
+            border-radius: 8px;
+            overflow: hidden;
         }
         
-        [data-theme="dark"] .table th {
-            background-color: var(--bg-secondary);
-            color: var(--text-light);
+        .table th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            border: none;
         }
         
-        [data-theme="dark"] .table td {
-            border-color: #495057;
+        .table td {
+            border-color: #dee2e6;
         }
         
-        [data-theme="dark"] .dropdown-menu {
-            background-color: var(--bg-dark);
-            border-color: #495057;
-            color: var(--text-light);
+        .dropdown-menu {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            color: #212529;
         }
         
-        [data-theme="dark"] .dropdown-item {
-            color: var(--text-light);
+        .dropdown-item {
+            padding: 8px 16px;
+            color: #212529;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s ease;
         }
         
-        [data-theme="dark"] .dropdown-item:hover {
-            background-color: var(--bg-secondary);
-            color: var(--text-light);
+        .dropdown-item:hover {
+            background-color: #e9ecef;
         }
         
-        [data-theme="dark"] .alert {
-            background-color: var(--bg-secondary);
-            border-color: #495057;
-            color: var(--text-light);
+        /* Ensure dropdown items are properly styled */
+        .dropdown-item {
+            color: #212529 !important;
+            display: block;
+            width: 100%;
+            padding: 0.25rem 1.5rem;
+            clear: both;
+            font-weight: 400;
+            color: #212529;
+            text-align: inherit;
+            text-decoration: none;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
         }
         
-        [data-theme="dark"] .btn-outline-light {
-            border-color: var(--text-light);
-            color: var(--text-light);
+        .dropdown-item:hover {
+            color: #1e2125 !important;
+            background-color: #e9ecef;
         }
         
-        [data-theme="dark"] .btn-outline-light:hover {
-            background-color: var(--text-light);
-            color: var(--bg-dark);
+        .dropdown-item:focus {
+            color: #1e2125 !important;
+            background-color: #e9ecef;
+        }
+        
+        .alert {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #495057;
+        }
+        
+        .btn-outline-light {
+            border-color: #f8f9fa;
+            color: #f8f9fa;
+        }
+        
+        .btn-outline-light:hover {
+            background-color: #f8f9fa;
+            color: #212529;
         }
         
         .form-control {
@@ -449,6 +776,14 @@
             margin: 0;
             padding: 0;
             background: rgba(0,0,0,0.05);
+            display: none; /* Initially hidden */
+        }
+        
+        .mobile-section-toggle {
+            margin-left: auto;
+            font-size: 12px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
         }
         
         .mobile-sub-nav-link {
@@ -562,30 +897,25 @@
         .mobile-sidebar::-webkit-scrollbar-thumb:hover {
             background: rgba(255,255,255,0.5);
         }
+        
+        /* Toast Styles */
+        .toast {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .toast-header {
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .toast-body {
+            border-radius: 0 0 8px 8px;
+        }
     </style>
     
     <script>
-        // Dark mode functionality
-        function toggleDarkMode() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Update icons
-            const icon = document.getElementById('darkModeIcon');
-            const mobileIcon = document.getElementById('mobileDarkModeIcon');
-            
-            if (icon) {
-                icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            }
-            if (mobileIcon) {
-                mobileIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            }
-        }
-        
         // Mobile sidebar functionality
         function openMobileSidebar() {
             const sidebar = document.getElementById('mobileSidebar');
@@ -605,23 +935,20 @@
             document.body.style.overflow = '';
         }
         
-        // Initialize theme on page load
+        // Toggle mobile sidebar sections
+        function toggleMobileSection(sectionId) {
+            const section = document.getElementById(sectionId + '-section');
+            const toggle = document.getElementById(sectionId + '-toggle');
+            
+            if (section && toggle) {
+                const isExpanded = section.style.display === 'block';
+                section.style.display = isExpanded ? 'none' : 'block';
+                toggle.className = isExpanded ? 'fas fa-chevron-down mobile-section-toggle' : 'fas fa-chevron-up mobile-section-toggle';
+            }
+        }
+        
+        // Initialize mobile sidebar on page load
         document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            const html = document.documentElement;
-            html.setAttribute('data-theme', savedTheme);
-            
-            // Update icons
-            const icon = document.getElementById('darkModeIcon');
-            const mobileIcon = document.getElementById('mobileDarkModeIcon');
-            
-            if (icon) {
-                icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            }
-            if (mobileIcon) {
-                mobileIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            }
-            
             // Mobile sidebar event listeners
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const closeSidebar = document.getElementById('closeSidebar');
@@ -669,6 +996,73 @@
             });
         });
     </script>
+    
+    <!-- Global Toast Notification System -->
+    <script>
+    // Toast notification system
+    function showToast(message, type = 'info') {
+        const toastContainer = document.querySelector('.toast-container');
+        const toastId = 'toast-' + Date.now();
+        
+        const bgClass = {
+            'success': 'bg-success',
+            'error': 'bg-danger', 
+            'warning': 'bg-warning',
+            'info': 'bg-info'
+        }[type] || 'bg-info';
+        
+        const icon = {
+            'success': 'fas fa-check-circle',
+            'error': 'fas fa-exclamation-circle',
+            'warning': 'fas fa-exclamation-triangle',
+            'info': 'fas fa-info-circle'
+        }[type] || 'fas fa-info-circle';
+        
+        const toastHTML = `
+            <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="${icon} me-2"></i>${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+        
+        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+        
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: 5000
+        });
+        
+        toast.show();
+        
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
+    }
+
+    <!-- Django Messages to Toast Conversion -->
+    {% if messages %}
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = [
+                {% for message in messages %}
+                    {
+                        'text': "{{ message.message|escapejs }}",
+                        'tags': "{{ message.tags }}"
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ];
+            
+            messages.forEach(function(msg) {
+                showToast(msg.text, msg.tags);
+            });
+        });
+        </script>
+    {% endif %}
     
     {% block extra_js %}
     {% endblock %}

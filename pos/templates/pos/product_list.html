@@ -1,6 +1,10 @@
 {% extends 'pos/base.html' %}
 
-{% block title %}Products - SalesSmart POS{% endblock %}
+{% block title %}Products - {{ request.business.name|default:"SalesSmart" }} POS | Inventory Management{% endblock %}
+
+{% block meta_description %}Manage your product inventory with {{ request.business.name|default:"SalesSmart" }} POS. Add, edit, and track products with real-time stock levels and analytics.{% endblock %}
+
+{% block meta_keywords %}product management, inventory management, POS products, stock tracking, {{ request.business.name|default:"SalesSmart" }}{% endblock %}
 
 {% block content %}
 <div class="row">
