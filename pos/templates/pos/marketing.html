@@ -522,6 +522,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+
+
         // Fade in animation on scroll
         function handleScrollAnimation() {
             const elements = document.querySelectorAll('.fade-in');
@@ -715,6 +717,23 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+// Check for signup hash in URL and show modal
+if (window.location.hash === "#signup" || sessionStorage.getItem('showSignupModal') === 'true') {
+    setTimeout(() => {
+        showSignupModal();
+        // Clear the sessionStorage flag
+        sessionStorage.removeItem('showSignupModal');
+    }, 500);
+}
+
+// Handle hash changes
+window.addEventListener("hashchange", function() {
+    if (window.location.hash === "#signup") {
+        showSignupModal();
+    }
+});
+
+
         // Hero Chart
         const heroCtx = document.getElementById('heroChart').getContext('2d');
         new Chart(heroCtx, {
